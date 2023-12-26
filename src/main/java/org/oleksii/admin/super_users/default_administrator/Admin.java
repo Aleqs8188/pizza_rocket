@@ -18,6 +18,25 @@ public class Admin {
         this.hashedPassword = hashedPassword;
     }
 
+    public Admin(String name, String surname, String username, String hashedPassword, String salt) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.salt = salt;
+        this.hashedPassword = hashedPassword;
+    }
+
+    public Admin(int id, String name, String surname, String username) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+    }
+
+    public Admin(int id) {
+        this.id = id;
+    }
+
     public Admin() {
     }
 
