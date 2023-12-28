@@ -10,10 +10,20 @@ public class Pizza {
     private String size;
     private String ingredients;
     private String type;
-    private Array rating;
+    private String rating;
 
-    public Pizza(int id, String name, String description, double price, String size, String ingredients, String type, Array rating) {
+    public Pizza(int id, String name, String description, double price, String size, String ingredients, String type, String rating) {
         this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.size = size;
+        this.ingredients = ingredients;
+        this.type = type;
+        this.rating = rating;
+    }
+
+    public Pizza(String name, String description, double price, String size, String ingredients, String type, String rating) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -82,11 +92,11 @@ public class Pizza {
         this.type = type;
     }
 
-    public Array getRating() {
+    public String getRating() {
         return rating;
     }
 
-    public void setRating(Array rating) {
+    public void setRating(String rating) {
         this.rating = rating;
     }
 

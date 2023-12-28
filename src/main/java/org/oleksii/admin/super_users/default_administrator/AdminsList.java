@@ -10,13 +10,13 @@ public class AdminsList extends Admin {
     private ArrayList<Admin> adminArrayList = getAdminsFromDB();
 
     public void printAllAdmins() {
-        System.out.println(ConsoleColor.BLINK.getCode() + ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+----+----------------------+---------------------------+----------------------------+------------------------------------------------------------------------------+--------------------------------------+");
-        System.out.println("| ID |        Name          |          Surname          |          Username          |                                HashedPassword                                |                 Salt                 |");
-        System.out.println("+----+----------------------+---------------------------+----------------------------+------------------------------------------------------------------------------+--------------------------------------+");
+        System.out.println(ConsoleColor.BLINK.getCode() + ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+----+----------------+-------------------+---------------------+-----------------------------------------------------------------------+------------------------------------+");
+        System.out.println("| ID |     Name       |       Surname     |       Username      |                              HashedPassword                           |                 Salt               |");
+        System.out.println("+----+----------------+-------------------+---------------------+-----------------------------------------------------------------------+------------------------------------+");
         int counter = 1;
         for (Admin admin : adminArrayList) {
             StringBuilder formattedString = new StringBuilder(String.format(
-                    "|%3s | %-20s | %-25s | %-26s | %-76s | %-37s|",
+                    "|%3s | %-14s | %-17s | %-19s | %-69s | %-35s|",
                     counter,
                     admin.getName(),
                     admin.getSurname(),
@@ -27,6 +27,6 @@ public class AdminsList extends Admin {
             System.out.println(formattedString);
         }
 
-        System.out.println("+----+----------------------+---------------------------+----------------------------+------------------------------------------------------------------------------+--------------------------------------+" + ConsoleColor.RESET.getCode());
+        System.out.println("+----+----------------+-------------------+---------------------+-----------------------------------------------------------------------+------------------------------------+" + ConsoleColor.RESET.getCode());
     }
 }

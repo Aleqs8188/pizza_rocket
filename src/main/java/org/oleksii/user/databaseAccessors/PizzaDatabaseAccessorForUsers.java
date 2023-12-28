@@ -9,7 +9,7 @@ import java.util.Date;
 
 import static org.oleksii.user.orders.CurrentOrder.printOrdersID;
 
-public class PizzaDatabaseAccessor extends DatabaseAccessor {
+public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
 
     public static ArrayList<Pizza> getPizzasFromBD() {
         ArrayList<Pizza> pizzaArrayList = new ArrayList<>();
@@ -26,7 +26,7 @@ public class PizzaDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("size"),
                             resultSet.getString("ingredients"),
                             resultSet.getString("type"),
-                            resultSet.getArray("rating"));
+                            resultSet.getString("rating"));
                     pizzaArrayList.add(pizza);
                 }
             }
@@ -53,7 +53,7 @@ public class PizzaDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("size"),
                             resultSet.getString("ingredients"),
                             resultSet.getString("type"),
-                            resultSet.getArray("rating"));
+                            resultSet.getString("rating"));
                 }
             }
         } catch (SQLException e) {

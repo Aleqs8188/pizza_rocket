@@ -1,13 +1,13 @@
 package org.oleksii.pizzas;
 
-import org.oleksii.user.databaseAccessors.PizzaDatabaseAccessor;
+import org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers;
 
 import java.util.ArrayList;
 
 public class PizzasList extends Pizza {
-    static ArrayList<Pizza> pizzaArrayList = PizzaDatabaseAccessor.getPizzasFromBD();
-    // Тут вивод
-    public static void printPizzas() {
+    static ArrayList<Pizza> pizzaArrayList = PizzaDatabaseAccessorForUsers.getPizzasFromBD();
+
+    public static void print_pizzas() {
         System.out.println("+----+----------------------+----------------------------------------------------+------------+------------+--------------------------------------------------------------+-----------------+-----------------+");
         System.out.println("| ID |         Name         |                  Description                       |   Price    |   Size     |                      Ingredients                             |      Type       |     Rating      |");
         System.out.println("+----+----------------------+----------------------------------------------------+------------+------------+--------------------------------------------------------------+-----------------+-----------------+");
@@ -31,7 +31,7 @@ public class PizzasList extends Pizza {
     }
 
     public static void main(String[] args) {
-        printPizzas();
+        print_pizzas();
     }
 
 }

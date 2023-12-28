@@ -2,14 +2,9 @@ package org.oleksii.admin.databaseAccessors;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.oleksii.admin.super_users.default_administrator.Admin;
-import org.oleksii.user.client.Client;
-import org.postgresql.util.PSQLException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
-
-import static org.oleksii.user.orders.CurrentOrder.printOrdersID;
 
 public class AdminDatabaseAccessor extends DatabaseAccessor {
 

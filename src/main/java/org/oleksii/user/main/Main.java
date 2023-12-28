@@ -14,10 +14,10 @@ import java.util.Scanner;
 
 import static org.oleksii.user.client.ClientsList.clientArrayList;
 import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.getOrdersFromDB;
-import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessor.addAnOrderToDB;
-import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessor.getPizzaFromBDByParameters;
+import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.addAnOrderToDB;
+import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.getPizzaFromBDByParameters;
 import static org.oleksii.user.orders.CurrentOrder.*;
-import static org.oleksii.pizzas.PizzasList.printPizzas;
+import static org.oleksii.pizzas.PizzasList.print_pizzas;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -105,7 +105,7 @@ public class Main {
                 switch (choice) {
                     case 1:
                         System.out.println("***********************************************MENU***********************************************");
-                        printPizzas();
+                        print_pizzas();
                         printSymbols();
                         System.out.println("*Choose what are you want: ");
                         System.out.println("1) Add to shopping cart || 2) Check my shopping cart || 3) Back");
