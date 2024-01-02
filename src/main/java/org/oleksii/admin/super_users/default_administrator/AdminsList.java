@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.getAdminsFromDB;
 
 public class AdminsList extends Admin {
-    private ArrayList<Admin> adminArrayList = getAdminsFromDB();
+    private final ArrayList<Admin> adminArrayList = getAdminsFromDB();
 
     public void printAllAdmins() {
         System.out.println(ConsoleColor.BLINK.getCode() + ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+----+----------------+-------------------+---------------------+-----------------------------------------------------------------------+------------------------------------+");
@@ -15,14 +15,14 @@ public class AdminsList extends Admin {
         System.out.println("+----+----------------+-------------------+---------------------+-----------------------------------------------------------------------+------------------------------------+");
         int counter = 1;
         for (Admin admin : adminArrayList) {
-            StringBuilder formattedString = new StringBuilder(String.format(
+            String formattedString = String.format(
                     "|%3s | %-14s | %-17s | %-19s | %-69s | %-35s|",
                     counter,
                     admin.getName(),
                     admin.getSurname(),
                     admin.getUsername(),
                     admin.getHashedPassword(),
-                    admin.getSalt()));
+                    admin.getSalt());
             counter++;
             System.out.println(formattedString);
         }

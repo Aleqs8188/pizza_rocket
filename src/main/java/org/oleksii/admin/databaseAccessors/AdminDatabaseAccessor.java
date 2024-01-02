@@ -29,7 +29,7 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
     public static ArrayList<Admin> getAdminsFromDB() {
         ArrayList<Admin> adminArrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM admins ORDER BY id ASC";
+            String sql = "SELECT * FROM admins ORDER BY id ";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -92,15 +92,17 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
         return false;
     }
 
-    public static void deleteAdminFromDB(String parameterValue) {
+    public static boolean deleteAdminFromDB(String parameterValue) {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "DELETE FROM admins WHERE username = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, parameterValue);
                 statement.executeUpdate();
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 }

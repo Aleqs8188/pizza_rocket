@@ -1,5 +1,6 @@
 package org.oleksii.user.main;
 
+import org.oleksii.pizzas.PizzasList;
 import org.oleksii.user.databaseAccessors.ClientDatabaseAccessor;
 import org.oleksii.user.client.Client;
 import org.oleksii.user.info.Address;
@@ -17,7 +18,6 @@ import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.getOrder
 import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.addAnOrderToDB;
 import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.getPizzaFromBDByParameters;
 import static org.oleksii.user.orders.CurrentOrder.*;
-import static org.oleksii.pizzas.PizzasList.print_pizzas;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -105,7 +105,8 @@ public class Main {
                 switch (choice) {
                     case 1:
                         System.out.println("***********************************************MENU***********************************************");
-                        print_pizzas();
+                        PizzasList pizzasList = new PizzasList();
+                        pizzasList.print_pizzas();
                         printSymbols();
                         System.out.println("*Choose what are you want: ");
                         System.out.println("1) Add to shopping cart || 2) Check my shopping cart || 3) Back");
@@ -114,12 +115,12 @@ public class Main {
                             case 1:
                                 System.out.print("*Choose pizza you want to buy: ");
                                 int idPizza = scanner.nextInt();
-                                if (idPizza > 20) {
+                                if (idPizza > 30) {
                                     System.out.println("*Choose the correct pizza ID");
                                     continue;
                                 }
                                 switch (idPizza) {
-                                    case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20:
+                                    case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30:
                                         if (getPizzaFromBDByParameters(idPizza) != null)
                                             order.add(getPizzaFromBDByParameters(idPizza));
                                         printSymbols();

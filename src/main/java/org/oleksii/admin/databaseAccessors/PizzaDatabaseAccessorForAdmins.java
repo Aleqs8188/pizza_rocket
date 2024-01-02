@@ -50,4 +50,18 @@ public class PizzaDatabaseAccessorForAdmins extends DatabaseAccessor {
         }
         return false;
     }
+
+    public static boolean delete_pizza_from_db(String parameterValue) {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
+            String sql = "DELETE FROM pizzas WHERE name = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, parameterValue);
+                statement.executeUpdate();
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
