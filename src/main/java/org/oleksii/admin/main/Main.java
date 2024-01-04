@@ -88,6 +88,33 @@ public class Main {
                 }
                 counter_2++;
             }
+            while (true) {
+                switch (start_managing_for_admin()) {
+                    case 1:
+                        main_pizza();
+                        break;
+                    case 2:
+                        main_promo();
+                        break;
+                    case 3:
+                        return;
+                }
+            }
+        }
+    }
+
+    public static int start_managing_for_admin() {
+        while (true) {
+            printSymbols();
+            System.out.print("(1) Managing pizza || (2) Managing promo || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
+            choice = scanner.nextInt();
+            if (choice > 3) {
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                continue;
+            } else if (choice == 3) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+            }
+            return choice;
         }
     }
 
@@ -138,17 +165,11 @@ public class Main {
                 counter_2++;
             }
             while (true) {
-                switch (start_managing()) {
+                switch (start_managing_for_super_admin()) {
                     case 1:
                         main_administrator();
                         break;
                     case 2:
-                        main_pizza();
-                        break;
-                    case 3:
-                        main_promo();
-                        break;
-                    case 4:
                         return;
                 }
             }
@@ -174,16 +195,25 @@ public class Main {
         printSymbols();
         int idNewAdmin = getAllIdFromDB();
         String userNameNewAdmin;
+        System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want to back - type ---> '9'" + ConsoleColor.RESET.getCode());
         System.out.print(ConsoleColor.BOLD.getCode() + "Name: " + ConsoleColor.RESET.getCode());
         String nameNewAdmin = reader.readLine();
+        if (nameNewAdmin.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         System.out.print(ConsoleColor.BOLD.getCode() + "Surname: " + ConsoleColor.RESET.getCode());
         String surNameNewAdmin = reader.readLine();
+        if (surNameNewAdmin.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         while (true) {
             System.out.print(ConsoleColor.BOLD.getCode() + "Username: " + ConsoleColor.RESET.getCode());
             userNameNewAdmin = reader.readLine();
             if (getAdminFromDB(userNameNewAdmin) != null) {
                 System.out.println(ConsoleColor.RED.getCode() + "*An administrator with the username '" + userNameNewAdmin + "' already exists, select a new username");
-                System.out.println("*Try again..." + ConsoleColor.RESET.getCode());
+                printSymbols();
             } else {
                 break;
             }
@@ -199,12 +229,17 @@ public class Main {
         int counter = 1;
         while (true) {
             printSymbols();
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want to back - type ---> '9'" + ConsoleColor.RESET.getCode());
             System.out.print(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter username to delete: " + ConsoleColor.RESET.getCode());
             String usernameToDelete = reader.readLine();
+            if (usernameToDelete.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             if (getAdminFromDB(usernameToDelete) != null) {
                 if (deleteAdminFromDB(usernameToDelete)) {
                     printSymbols();
-                    System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "Admin with username '" + usernameToDelete + "'" + " successfully deleted" + ConsoleColor.RESET.getCode());
+                    System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Admin with username '" + usernameToDelete + "'" + " successfully deleted" + ConsoleColor.RESET.getCode());
                     break;
                 }
             } else {
@@ -212,6 +247,7 @@ public class Main {
                     System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
                     break;
                 } else {
+                    printSymbols();
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter an existing admin..." + ConsoleColor.RESET.getCode());
                     counter++;
                 }
@@ -239,6 +275,10 @@ public class Main {
         String name;
         while (true) {
             name = checking_values_for_adding(20, "(Pepperoni)", "Name: ", "Wrong name...");
+            if (name.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             if (get_pizza_from_db_by_name(name) != null) {
                 System.out.println(ConsoleColor.RED.getCode() + "*An Pizza with name '" + name + "' already exists");
                 System.out.println("*Choose new name for pizza" + ConsoleColor.RESET.getCode());
@@ -260,8 +300,13 @@ public class Main {
         int counter = 1;
         while (true) {
             printSymbols();
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want to back - type ---> '9'" + ConsoleColor.RESET.getCode());
             System.out.print(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter name of pizza to delete: " + ConsoleColor.RESET.getCode());
             String pizzaNameToDelete = reader.readLine();
+            if (pizzaNameToDelete.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             printSymbols();
             if (get_pizza_from_db_by_name(pizzaNameToDelete) != null) {
                 if (delete_pizza_from_db(pizzaNameToDelete)) {
@@ -300,10 +345,14 @@ public class Main {
 
     public static void add_new_promo() throws IOException {
         printSymbols();
-        System.out.println("If you want back - type ---> '9'");
+        System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want to back - type ---> '9'" + ConsoleColor.RESET.getCode());
         String name;
         while (true) {
             name = checking_values_for_adding(16, "('LOVE23SPECIAL')", "Name: ", "Wrong name...");
+            if (name.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             if (get_promo_from_db_by_name(name)) {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*An promo with name '" + name + "' already exists");
                 System.out.println("*Choose new name for promo" + ConsoleColor.RESET.getCode());
@@ -311,40 +360,44 @@ public class Main {
                 break;
             }
         }
-        if (name.equals("9")) {
-            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            return;
-        }
         int discount;
         while (true) {
-            discount = Integer.parseInt(checking_values_for_adding(3, "(5%-100%)", "Discount: ", "Wrong discount..."));
-            if (discount < 5 || discount > 100) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "You need to enter the discount percentage from 5% to 100%, not " + discount + "%" + ConsoleColor.RESET.getCode());
-            } else {
-                break;
+            try {
+                discount = Integer.parseInt(checking_values_for_adding(3, "(5%-100%)", "Discount: ", "Wrong discount..."));
+                if (discount == 9) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                    return;
+                }
+                if (discount < 5 || discount > 100) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "You need to enter the discount percentage from 5% to 100%, not " + discount + "%" + ConsoleColor.RESET.getCode());
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*The entered value contains characters other than numbers" + ConsoleColor.RESET.getCode());
             }
-        }
-        if (discount == 9) {
-            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            return;
         }
         String description;
         while (true) {
             description = checking_values_for_adding(170, "('LOVE23SPECIAL' invites you to unlock exclusive Valentine's Day deals, adding a touch of romance to your special moments. Enjoy unique offers and celebrate with us!)", "Description: ", "Wrong description...");
+            if (description.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             if (description.length() > 170 || description.length() < 10) {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Allowable description length is from 10 to 170 characters..." + ConsoleColor.RESET.getCode());
             } else {
                 break;
             }
         }
-        if (description.equals("9")) {
-            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            return;
-        }
         String end_promoStr;
         LocalDateTime end_promo;
         while (true) {
             end_promoStr = checking_values_for_adding(16, "(yyyy-MM-dd HH-mm)", "End promo day: ", "Wrong date...");
+            if (end_promoStr.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             try {
                 end_promo = LocalDateTime.parse(end_promoStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
                 break;
@@ -352,11 +405,11 @@ public class Main {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect date entry, you should enter '2023-12-31 23:59' using this example" + ConsoleColor.RESET.getCode());
             }
         }
-        if (end_promoStr.equals("9")) {
+        boolean active = Boolean.parseBoolean(checking_values_for_adding(5, "(true-false)", "Active?: ", "Wrong active..."));
+        if (String.valueOf(active).equals("9")) {
             System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
             return;
         }
-        boolean active = Boolean.parseBoolean(checking_values_for_adding(5, "(true-false)", "Active?: ", "Wrong active..."));
         add_promo_to_db(new Promo(name, discount, description, LocalDateTime.now(), end_promo, active));
         System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*New promo added*" + ConsoleColor.RESET.getCode());
     }
@@ -365,8 +418,13 @@ public class Main {
         int counter = 1;
         while (true) {
             printSymbols();
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want to back - type ---> '9'" + ConsoleColor.RESET.getCode());
             System.out.print(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter name of promo to delete: " + ConsoleColor.RESET.getCode());
             String promoNameToDelete = reader.readLine();
+            if (promoNameToDelete.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             printSymbols();
             if (get_promo_from_db_by_name(promoNameToDelete)) {
                 if (delete_promo_from_db(promoNameToDelete)) {
@@ -374,7 +432,7 @@ public class Main {
                     break;
                 }
             } else {
-                if (counter > 5) {
+                if (counter >= 5) {
                     System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
                     break;
                 } else {
@@ -386,7 +444,6 @@ public class Main {
     }
 
     public static void change_promo_status() throws IOException {
-        printSymbols();
         switch (start_managing_promo_configuration()) {
             case 1:
                 change_promo_name();
@@ -403,8 +460,6 @@ public class Main {
             case 5:
                 change_promo_active();
                 break;
-            case 6:
-                return;
         }
     }
 
@@ -425,15 +480,15 @@ public class Main {
         }
     }
 
-    public static int start_managing() {
+    public static int start_managing_for_super_admin() {
         while (true) {
             printSymbols();
-            System.out.print("(1) Managing Administrators || (2) Managing Pizzas || (3) Managing Promos || " + ConsoleColor.RED.getCode() + "(4) Exit ---| " + ConsoleColor.RESET.getCode());
+            System.out.print("(1) Managing Administrators || " + ConsoleColor.RED.getCode() + "(2) Exit ---| " + ConsoleColor.RESET.getCode());
             choice = scanner.nextInt();
-            if (choice > 4) {
+            if (choice > 2) {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
                 continue;
-            } else if (choice == 4) {
+            } else if (choice == 2) {
                 System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
             }
             return choice;
@@ -441,70 +496,61 @@ public class Main {
     }
 
     public static int start_managing_admins() {
-        while (true) {
-            AdminsList admins = new AdminsList();
-            printSymbols();
-            admins.printAllAdmins();
-            printSymbols();
-            System.out.print("(1) Add new administrator || (2) Delete administrator || " + ConsoleColor.RED.getCode() + "(3) Back ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 3) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-            } else if (choice == 3) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            }
-            return choice;
+        AdminsList admins = new AdminsList();
+        printSymbols();
+        admins.printAllAdmins();
+        printSymbols();
+        System.out.print("(1) Add new administrator || (2) Delete administrator || " + ConsoleColor.RED.getCode() + "(3) Back ---| " + ConsoleColor.RESET.getCode());
+        choice = scanner.nextInt();
+        if (choice > 3) {
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+        } else if (choice == 3) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
         }
+        return choice;
     }
 
     public static int start_managing_pizza() {
-        while (true) {
-            printSymbols();
-            PizzasList pizzasList = new PizzasList();
-            pizzasList.print_pizzas();
-            printSymbols();
-            System.out.print("(1) Add new pizza || (2) Delete pizza || " + ConsoleColor.RED.getCode() + "(3) Back ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 3) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-            } else if (choice == 3) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            }
-            return choice;
+        printSymbols();
+        PizzasList pizzasList = new PizzasList();
+        pizzasList.print_pizzas();
+        printSymbols();
+        System.out.print("(1) Add new pizza || (2) Delete pizza || " + ConsoleColor.RED.getCode() + "(3) Back ---| " + ConsoleColor.RESET.getCode());
+        choice = scanner.nextInt();
+        if (choice > 3) {
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+        } else if (choice == 3) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
         }
+        return choice;
     }
 
     public static int start_managing_promo() {
-        while (true) {
-            printSymbols();
-            PromoList promoList = new PromoList();
-            promoList.print_all_promo();
-            printSymbols();
-            System.out.print("(1) Add new promo || (2) Delete promo || (3) Change promo || " + ConsoleColor.RED.getCode() + "(4) Back ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 4) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-            } else if (choice == 4) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            }
-            return choice;
+        PromoList promoList = new PromoList();
+        promoList.print_all_promo();
+        printSymbols();
+        System.out.print("(1) Add new promo || (2) Delete promo || (3) Change promo || " + ConsoleColor.RED.getCode() + "(4) Back ---| " + ConsoleColor.RESET.getCode());
+        choice = scanner.nextInt();
+        if (choice > 4) {
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+        } else if (choice == 4) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
         }
+        return choice;
     }
 
     public static int start_managing_promo_configuration() {
-        while (true) {
-            PromoList promoList = new PromoList();
-            promoList.print_all_promo();
-            printSymbols();
-            System.out.print("(1) Change Name || (2) Change discount || (3) Change description || (4) Change end date || (5) Change status || " + ConsoleColor.RED.getCode() + "(6) Back ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 6) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-            } else if (choice == 6) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
-            }
-            return choice;
+        PromoList promoList = new PromoList();
+        promoList.print_all_promo();
+        printSymbols();
+        System.out.print("(1) Change Name || (2) Change discount || (3) Change description || (4) Change end date || (5) Change status || " + ConsoleColor.RED.getCode() + "(6) Back ---| " + ConsoleColor.RESET.getCode());
+        choice = scanner.nextInt();
+        if (choice > 6) {
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+        } else if (choice == 6) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
         }
+        return choice;
     }
 
     public static void change_promo_name() throws IOException {
@@ -558,12 +604,17 @@ public class Main {
                 System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
                 return;
             }
-            if (changer_promo_discount_in_db(discount, promo_name)) {
-                printSymbols();
-                System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
-                return;
+            if (discount.matches("\\d+")) {
+                if (changer_promo_discount_in_db(discount, promo_name)) {
+                    printSymbols();
+                    System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                    return;
+                } else {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
+                }
             } else {
-                System.out.println("Something wrong.Try again...");
+                printSymbols();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*The entered value contains characters other than numbers" + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -593,7 +644,7 @@ public class Main {
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
                 return;
             } else {
-                System.out.println("Something wrong.Try again...");
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -623,7 +674,7 @@ public class Main {
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
                 return;
             } else {
-                System.out.println("Something wrong.Try again...");
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -653,7 +704,7 @@ public class Main {
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
                 return;
             } else {
-                System.out.println("Something wrong.Try again...");
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -668,7 +719,6 @@ public class Main {
                 System.out.println(ConsoleColor.RED.getCode() + wrong + ConsoleColor.RESET.getCode());
                 printSymbols();
             } else {
-                printSymbols();
                 break;
             }
         }

@@ -5,6 +5,7 @@ import org.oleksii.admin.promotional_code.Promo;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class PromoDatabaseAccessor extends DatabaseAccessor {
@@ -36,13 +37,14 @@ public class PromoDatabaseAccessor extends DatabaseAccessor {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "INSERT INTO promos (name, discount, description, date_of_creation, end_date, is_active) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                String s = createLocalDateTimeStr(promo);
-                LocalDateTime a = LocalDateTime.parse(s, DateTimeFormatter.ofPattern("yyyy-M-d HH:mm"));
                 preparedStatement.setString(1, promo.getName());
                 preparedStatement.setInt(2, promo.getDiscount());
                 preparedStatement.setString(3, promo.getDescription());
-                java.sql.Timestamp timestamp_date_of_creation = java.sql.Timestamp.valueOf(a);
-                preparedStatement.setTimestamp(4, timestamp_date_of_creation);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime truncatedDateTime = now.truncatedTo(ChronoUnit.MINUTES);
+                java.sql.Timestamp timestampDate = java.sql.Timestamp.valueOf(truncatedDateTime);
+                preparedStatement.setTimestamp(4, timestampDate);
                 java.sql.Timestamp timestamp_end_date = java.sql.Timestamp.valueOf(promo.getEnd_date());
                 preparedStatement.setTimestamp(5, timestamp_end_date);
                 preparedStatement.setBoolean(6, promo.isIs_active());

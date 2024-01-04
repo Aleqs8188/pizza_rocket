@@ -1,37 +1,28 @@
 package org.oleksii.user.orders;
 
+import org.oleksii.enums.ConsoleColor;
 import org.oleksii.pizzas.Pizza;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static org.oleksii.api.DistanceCalculateApi.getResultOfDistance;
 
 public class CurrentOrder {
     public static ArrayList<Pizza> order = new ArrayList<>();
-//Вивод
+
     public static void printOrders() {
-        System.out.println("+----+----------------------+----------------------------------------------------+------------+------------+--------------------------------------------------------------+-----------------+-----------------+");
-        System.out.println("| ID |         Name         |                  Description                       |   Price    |   Size     |                      Ingredients                             |      Type       |     Rating      |");
-        System.out.println("+----+----------------------+----------------------------------------------------+------------+------------+--------------------------------------------------------------+-----------------+-----------------+");
-
+        int counter = 1;
+        System.out.println(ConsoleColor.BLINK.getCode() + ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+----+----------------------+----------------------------------------------+-------+---------+------------------------------------------------------+--------------+--------+");
+        System.out.println("| ID |         Name         |               Description                    | Price |  Size   |                   Ingredients                        |     Type     | Rating |");
+        System.out.println("+----+----------------------+----------------------------------------------+-------+---------+------------------------------------------------------+--------------+--------+");
         for (Pizza p : order) {
-            StringBuilder formattedString = new StringBuilder(String.format(
-                    "|%3s | %-20s | %-50s | %-10s | %-10s | %-60s | %-15s | %-15s |",
-                    p.getId(),
-                    p.getName(),
-                    p.getDescription(),
-                    p.getPrice(),
-                    p.getSize(),
-                    p.getIngredients(),
-                    p.getType(),
-                    p.getRating()));
-
+            String formattedString = String.format("|%3s | %-20s | %-44s | %-5s | %-7s | %-52s | %-12s | %-6s |", counter, p.getName(), p.getDescription(), p.getPrice(), p.getSize(), p.getIngredients(), p.getType(), p.getRating());
             System.out.println(formattedString);
+            counter++;
         }
-
-        System.out.println("+----+----------------------+----------------------------------------------------+------------+------------+--------------------------------------------------------------+-----------------+-----------------+");
+        System.out.println("+----+----------------------+----------------------------------------------+-------+---------+------------------------------------------------------+--------------+--------+" + ConsoleColor.RESET.getCode());
     }
-
 
 
     public static double totalSum() {
@@ -61,55 +52,56 @@ public class CurrentOrder {
     }
 
     public static double realizeAnOrder(String postalCode1, String postalCode2) {
-        double a = getResultOfDistance(postalCode1, postalCode2);
-        if (a > 0) {
-            timeToDeliver(a);
-            return a;
-        }
-        return a;
+        return getResultOfDistance(postalCode1, postalCode2);
     }
 
-    public static int timeToDeliver(double a) {
+    public static String timeToDeliver(double a) {
         if (a < 1) {
-            System.out.println("*Your order will be delivered within 10 minutes");
-            return 0;
+            return "10 minutes";
         } else if (a < 2) {
-            System.out.println("*Your order will be delivered within 20 minutes");
-            return 4;
+            return "20 minutes";
         } else if (a < 3) {
-            System.out.println("*Your order will be delivered within 30 minutes");
-            return 6;
+            return "30 minutes";
         } else if (a < 4) {
-            System.out.println("*Your order will be delivered within 40 minutes");
-            return 8;
+            return "40 minutes";
         } else if (a < 5) {
-            System.out.println("*Your order will be delivered within 50 minutes");
-            return 10;
+            return "50 minutes";
         } else if (a < 6) {
-            System.out.println("*Your order will be delivered within 1 hour");
-            return 12;
+            return "1 hour";
         } else if (a < 7) {
-            System.out.println("*Your order will be delivered within 1 hour 10 minutes");
-            return 14;
+            return "1 hour 10 minutes";
         } else if (a < 8) {
-            System.out.println("*Your order will be delivered within 1 hour 20 minutes");
-            return 16;
+            return "1 hour 20 minutes";
         } else if (a < 9) {
-            System.out.println("*Your order will be delivered within 1 hour 30 minutes");
-            return 18;
+            return "1 hour 30 minutes";
         } else if (a < 10) {
-            System.out.println("*Your order will be delivered within 1 hour 40 minutes");
-            return 20;
+            return "1 hour 40 minutes";
         } else if (a < 11) {
-            System.out.println("*Your order will be delivered within 1 hour 50 minutes");
-            return 22;
+            return "1 hour 50 minutes";
         } else if (a < 12) {
-            System.out.println("*Your order will be delivered within 2 hours");
-            return 24;
+            return "2 hours";
         } else if (a < 13) {
-            System.out.println("*Your order will be delivered within more than 2 hours");
-            return 26;
+            return "2 hours 10 min";
         }
-        return 0;
+        return null;
+    }
+
+    public static void display_order_summary(double distance, double deliveryCost, double totalCost) {
+        String distanceToPrint = timeToDeliver(distance);
+        String deliveryTimeStr = "Estimated Delivery Time: " + distanceToPrint;
+        String distanceStr = "Distance: " + new DecimalFormat("0.00").format(distance) + " km";
+        String deliveryCostStr = "Delivery Cost: " + new DecimalFormat("0.00").format(deliveryCost) + " PLN";
+        String totalCostStr = "Total Cost: " + new DecimalFormat("0.00").format(totalCost) + " PLN";
+
+        System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+------------------------------------------------------------+");
+        System.out.println("|                     Your Order Details                     |");
+        System.out.println("+------------------------------------------------------------+");
+        System.out.printf("| %-58s |\n", deliveryTimeStr);
+        System.out.printf("| %-58s |\n", distanceStr);
+        System.out.printf("| %-58s |\n", deliveryCostStr);
+        System.out.printf("| %-58s |\n", totalCostStr);
+        System.out.println("+------------------------------------------------------------+");
+        System.out.println("|               Thank You for Your Order.                    |");
+        System.out.println("+------------------------------------------------------------+" + ConsoleColor.RESET.getCode());
     }
 }

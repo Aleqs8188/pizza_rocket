@@ -62,7 +62,6 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
     }
 
     public static Client searchClientInBD(String parameterValue1, String parameterValue2, String parameterValue3) {
-        List<Client> resultList = new ArrayList<>();
         Client myObject = new Client();
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
@@ -86,7 +85,7 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("street"),
                             resultSet.getString("city"),
                             resultSet.getString("postalcode"))));
-                    resultList.add(myObject);
+                    return myObject;
                 }
             }
         } catch (SQLException e) {
@@ -98,7 +97,6 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
     }
 
     public static Client searchClientInBD(String parameterValue1, String parameterValue2) {
-        List<Client> resultList = new ArrayList<>();
         Client myObject = new Client();
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
@@ -121,7 +119,7 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("street"),
                             resultSet.getString("city"),
                             resultSet.getString("postalcode"))));
-                    resultList.add(myObject);
+                    return myObject;
                 }
             }
         } catch (SQLException e) {

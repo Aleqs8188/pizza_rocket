@@ -14,7 +14,7 @@ public class PizzasList extends Pizza {
         System.out.println("| ID |         Name         |               Description                    | Price |  Size   |                   Ingredients                        |     Type     | Rating |");
         System.out.println("+----+----------------------+----------------------------------------------+-------+---------+------------------------------------------------------+--------------+--------+");
         for (Pizza p : pizzaArrayList) {
-            StringBuilder formattedString = new StringBuilder(String.format(
+            String formattedString = String.format(
                     "|%3s | %-20s | %-44s | %-5s | %-7s | %-52s | %-12s | %-6s |",
                     counter,
                     p.getName(),
@@ -23,11 +23,10 @@ public class PizzasList extends Pizza {
                     p.getSize(),
                     p.getIngredients(),
                     p.getType(),
-                    p.getRating()));
+                    p.getRating());
             System.out.println(formattedString);
             counter++;
         }
-
         System.out.println("+----+----------------------+----------------------------------------------+-------+---------+------------------------------------------------------+--------------+--------+" + ConsoleColor.RESET.getCode());
     }
 }
