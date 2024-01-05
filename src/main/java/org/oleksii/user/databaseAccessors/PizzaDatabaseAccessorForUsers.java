@@ -1,13 +1,9 @@
 package org.oleksii.user.databaseAccessors;
 
-import org.oleksii.user.client.Client;
 import org.oleksii.pizzas.Pizza;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
-
-import static org.oleksii.user.orders.CurrentOrder.printOrdersID;
 
 public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
 
@@ -36,13 +32,13 @@ public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
         return pizzaArrayList;
     }
 
-    public static Pizza getPizzaFromBDByParameters(int parameterValue1) {
+    public static Pizza getPizzaFromBDByParameters(String parameterValue1) {
         Pizza myObject = null;
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM pizzas WHERE id = ? ";
+            String sql = "SELECT * FROM pizzas WHERE name = ? ";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setInt(1, parameterValue1);
+                preparedStatement.setString(1, parameterValue1);
 
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -60,23 +56,5 @@ public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
             e.printStackTrace();
         }
         return myObject;
-    }
-
-    public static boolean addAnOrderToDB(Client client) {
-        Date date = new Date();
-        int idClient = client.getId();
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-            String sql1 = "UPDATE clients SET orders = orders || ARRAY[?]::character varying[] WHERE id = ?";
-            String[] dataArray = {printOrdersID(), date.toString()};
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql1)) {
-                java.sql.Array pgArray = connection.createArrayOf("varchar", dataArray);
-                preparedStatement.setArray(1, pgArray);
-                preparedStatement.setInt(2, idClient);
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 }

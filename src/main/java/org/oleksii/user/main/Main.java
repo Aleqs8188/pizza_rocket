@@ -15,13 +15,15 @@ import java.util.Scanner;
 
 import static org.oleksii.user.client.ClientsList.clientArrayList;
 import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.*;
-import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.addAnOrderToDB;
 import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.getPizzaFromBDByParameters;
 import static org.oleksii.user.orders.CurrentOrder.*;
+import static org.oleksii.user.orders.OrdersOfAllTime.printAllOrders;
 
-//2) make print OrdersOfAllTime
-//4) checker on exception JSonArray to rewrite new postal code
-//5) make adding and delete pizza to order by name
+//1) make print OrdersOfAllTime
+//1/5) make button to order again
+//2) make print promo and communicate with him
+//3) make <----Back for clients in whole places
+
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -48,26 +50,29 @@ public class Main {
             System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Your shopping basket is empty... To make an order you need to order at least 1 pizza!" + ConsoleColor.RESET.getCode());
             return;
         }
-        System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "************************************************************************************You ordered******************************************************************************" + ConsoleColor.RESET.getCode());
-        printOrders();
-        printSymbols();
         double distance = realizeAnOrder("50-001", clientLog.getAddress().getPostalCode());
-        double costDelivery = distance * 2;
-        double sumOfOrderAndDelivery = costDelivery + totalSum();
-        display_order_summary(distance, costDelivery, sumOfOrderAndDelivery);
-        addAnOrderToDB(clientLog);
-        System.exit(0);
+        if (distance > 0) {
+            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "************************************************************************************You ordered******************************************************************************" + ConsoleColor.RESET.getCode());
+            printOrders();
+            printSymbols();
+            double costDelivery = distance * 2;
+            double sumOfOrderAndDelivery = costDelivery + totalSum();
+            display_order_summary(distance, costDelivery, sumOfOrderAndDelivery);
+            addAnOrderToDB(clientLog);
+            System.exit(0);
+        }
     }
 
     public static void print_orders_of_all_time_for_client() {
-        OrdersOfAllTime clientOrders = new OrdersOfAllTime(getOrdersFromDB(clientLog));
+        OrdersOfAllTime ordersOfAllTime = new OrdersOfAllTime(getOrdersFromDB(clientLog));
         printSymbols();
-        if (clientOrders.getOrders() == null) {
+        if (ordersOfAllTime.clientOrders == null || ordersOfAllTime.clientOrders.length == 0) {
             System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "You haven't made any orders yet" + ConsoleColor.RESET.getCode());
             return;
         }
         System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "**********************************************************************Your orders for all time*******************************************************************************" + ConsoleColor.RESET.getCode());
-        clientOrders.printAllOrders();
+
+        printAllOrders(getOrdersFromDB(clientLog));
     }
 
     public static void total_amount_of_order() {
@@ -79,15 +84,15 @@ public class Main {
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Total amount of your order: " + totalSum() + ConsoleColor.RESET.getCode());
     }
 
-    public static void delete_pizza_from_order() {
+    public static void delete_pizza_from_order() throws IOException {
         while (true) {
             printSymbols();
             try {
-                System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Enter id pizza you want to delete: " + ConsoleColor.RED.getCode());
-                int idPizzaToDelete = scanner.nextInt();
-                if (deleteObjectFromOrder(idPizzaToDelete) == null) {
+                System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Enter pizza name you want to delete: " + ConsoleColor.RED.getCode());
+                String pizzaToDelete = reader.readLine();
+                if (deleteObjectFromOrder(pizzaToDelete) == null) {
                     printSymbols();
-                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Enter correct id of Pizza..." + ConsoleColor.RESET.getCode());
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Enter correct name of Pizza..." + ConsoleColor.RESET.getCode());
                 } else {
                     printSymbols();
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*This pizza has been removed from your order...." + ConsoleColor.RESET.getCode());
@@ -128,16 +133,17 @@ public class Main {
         }
     }
 
-    public static int start_of_selecting_pizza() {
-        int idPizza;
+    public static String start_of_selecting_pizza() throws IOException {
+        String pizzaName;
         while (true) {
             printSymbols();
-            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Select the pizza you want to purchase: " + ConsoleColor.RESET.getCode());
-            idPizza = scanner.nextInt();
-            if (idPizza > 30) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Choose the correct pizza ID" + ConsoleColor.RESET.getCode());
+            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Enter the pizza name you want to purchase: " + ConsoleColor.RESET.getCode());
+            pizzaName = reader.readLine();
+            if (getPizzaFromBDByParameters(pizzaName) != null) {
+                return pizzaName;
             } else {
-                return idPizza;
+                printSymbols();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter an existing pizza..." + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -162,25 +168,46 @@ public class Main {
     }
 
     public static int start_of_interaction_with_the_client() {
+        int choice = 0;
+
         printSymbols();
-        System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Remember, that delivery is not free, for distances " + ConsoleColor.RED.getCode() + "over 2 kilometers, " +
-                ConsoleColor.CYAN.getCode() + "the delivery cost is " + ConsoleColor.RED.getCode() + "2 PLN per kilometer!");
+        System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() +
+                "*Remember, that delivery is not free, for distances " +
+                ConsoleColor.RED.getCode() + "over 2 kilometers, " +
+                ConsoleColor.CYAN.getCode() + "the delivery cost is " +
+                ConsoleColor.RED.getCode() + "2 PLN per kilometer!");
+
         while (true) {
-            printSymbols();
-            System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what you want to do...");
-            System.out.print("1) Check the Menu and add items to the list || " +
-                    "2) Check all my orders for all time || " +
-                    "3) Make an order || " +
-                    ConsoleColor.RED.getCode() + "4) Exit --- ");
-            choice = scanner.nextInt();
-            if (choice > 4) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-                continue;
-            } else if (choice == 4) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+            try {
+                printSymbols();
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Choose what you want to do...");
+                System.out.print("1) Check the Menu and add items to the list || " +
+                        "2) Check all my orders for all time || " +
+                        "3) Make an order || " +
+                        ConsoleColor.RED.getCode() + "4) Exit --- ");
+
+                choice = scanner.nextInt();
+
+                if (choice > 4) {
+                    printSymbols();
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                            "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                } else if (choice == 4) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() +
+                            "<---Exit" + ConsoleColor.RESET.getCode());
+                    break;
+                }
+
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
-            return choice;
         }
+        return choice;
     }
 
     public static void registration_new_client() throws IOException {
@@ -192,10 +219,11 @@ public class Main {
         String nameReg = reader.readLine();
         System.out.print("          -Surname: ");
         String surnameReg = reader.readLine();
-        System.out.print("          -Phone number: ");
-        String phoneReg = reader.readLine();
         String emailReg;
+        String phoneReg;
         while (true) {
+            System.out.print("          -Phone number: ");
+            phoneReg = reader.readLine();
             System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "          -Email: ");
             emailReg = reader.readLine();
             Client clientWithSameParameters = searchClientInBD(emailReg, phoneReg);
@@ -211,9 +239,12 @@ public class Main {
         String streetReg = reader.readLine();
         System.out.print("          -City: ");
         String cityReg = reader.readLine();
-        System.out.print("          -Postal code: ");
-        String postalCodeReg = reader.readLine();
-        System.out.println("*Payment information:");
+        String postalCodeReg;
+        do {
+            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "          -Postal code of Wroclaw: " + ConsoleColor.RESET.getCode());
+            postalCodeReg = reader.readLine();
+        } while (!(realizeAnOrder("50-001", postalCodeReg) > 0));
+        System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Payment information:");
         System.out.print("          -Credit Card Number: " + ConsoleColor.RESET.getCode());
         String creditCardNumberReg = reader.readLine();
         Client newClient = new Client(listSize + 1, nameReg, surnameReg, phoneReg, emailReg,
@@ -255,15 +286,9 @@ public class Main {
                 case 1:
                     switch (start_of_interaction_with_the_shopping_cart()) {
                         case 1:
-                            int idPizza = start_of_selecting_pizza();
-                            switch (idPizza) {
-                                case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30:
-                                    if (getPizzaFromBDByParameters(idPizza) != null)
-                                        order.add(getPizzaFromBDByParameters(idPizza));
-                                    printSymbols();
-                                    System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*This pizza has been successfully added to your order!" + ConsoleColor.RESET.getCode());
-                                    break;
-                            }
+                            order.add(getPizzaFromBDByParameters(start_of_selecting_pizza()));
+                            printSymbols();
+                            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*This pizza has been successfully added to your order!" + ConsoleColor.RESET.getCode());
                             break;
                         case 2:
                             switch (start_of_managing_with_orders()) {
@@ -282,6 +307,7 @@ public class Main {
                     break;
                 case 2:
                     print_orders_of_all_time_for_client();
+                    //make button to order again
                     break;
                 case 3:
                     make_an_order_for_client();

@@ -1,7 +1,5 @@
 package org.oleksii.pizzas;
 
-import java.sql.Array;
-
 public class Pizza {
     private int id;
     private String name;

@@ -40,7 +40,6 @@ public class PromoDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.setString(1, promo.getName());
                 preparedStatement.setInt(2, promo.getDiscount());
                 preparedStatement.setString(3, promo.getDescription());
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime truncatedDateTime = now.truncatedTo(ChronoUnit.MINUTES);
                 java.sql.Timestamp timestampDate = java.sql.Timestamp.valueOf(truncatedDateTime);
@@ -163,17 +162,5 @@ public class PromoDatabaseAccessor extends DatabaseAccessor {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static String createLocalDateTimeStr(Promo promo) {
-        return promo.getDate_of_creation().getYear() +
-                "-" +
-                promo.getDate_of_creation().getMonthValue() +
-                "-" +
-                promo.getDate_of_creation().getDayOfMonth() +
-                " " +
-                promo.getDate_of_creation().getHour() +
-                ":" +
-                promo.getDate_of_creation().getMinute();
     }
 }

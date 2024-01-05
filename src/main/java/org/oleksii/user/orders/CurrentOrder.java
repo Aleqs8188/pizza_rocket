@@ -33,9 +33,9 @@ public class CurrentOrder {
         return sum;
     }
 
-    public static Pizza deleteObjectFromOrder(int idPizza) {
+    public static Pizza deleteObjectFromOrder(String pizzaName) {
         for (Pizza p : order) {
-            if (p.getId() == idPizza) {
+            if (p.getName().equals(pizzaName)) {
                 order.remove(p);
                 return p;
             }
@@ -43,10 +43,10 @@ public class CurrentOrder {
         return null;
     }
 
-    public static String printOrdersID() {
+    public static String printOrdersName() {
         StringBuilder a = new StringBuilder();
         for (Pizza p : order) {
-            a.append("IdPizza:").append(p.getId()).append(", ").append("name=").append(p.getName()).append(", ");
+            a.append("'").append(p.getName()).append("'");
         }
         return a.toString();
     }

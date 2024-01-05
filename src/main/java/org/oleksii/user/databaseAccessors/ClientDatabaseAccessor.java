@@ -5,8 +5,12 @@ import org.oleksii.user.client.Client;
 import org.oleksii.user.info.PaymentInfo;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
+
+import static org.oleksii.user.orders.CurrentOrder.order;
+import static org.oleksii.user.orders.CurrentOrder.printOrdersName;
 
 public class ClientDatabaseAccessor extends DatabaseAccessor {
     public static ArrayList<Client> getClientsFromBD() {
@@ -128,10 +132,28 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
         return myObject;
     }
 
-    // Тут запрос новий
-    public static String[][] getOrdersFromDB(Client client) {
+    public static boolean addAnOrderToDB(Client client) {
+        LocalDateTime date = LocalDateTime.now();
         int idClient = client.getId();
-        String[][] orders = null;
+
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
+            String sql = "UPDATE clients SET orders = array_append(orders, ?) WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, printOrdersName() + "!" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                preparedStatement.setInt(2, idClient);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static String[] getOrdersFromDB(Client client) {
+        int idClient = client.getId();
+        String[] orders = null;
+
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "SELECT orders FROM clients WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -140,8 +162,7 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                     if (resultSet.next()) {
                         Array pgArray = resultSet.getArray("orders");
                         if (pgArray != null) {
-                            Object array = pgArray.getArray();
-                            orders = (String[][]) array;
+                            orders = (String[]) pgArray.getArray();
                         }
                     }
                 }

@@ -2,26 +2,31 @@ package org.oleksii.user.orders;
 
 import org.oleksii.user.client.Client;
 
-import java.util.Arrays;
+import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.getOrdersFromDB;
 
 public class OrdersOfAllTime extends Client {
-    public String[][] orders;
+    public String[] clientOrders;
 
-    public OrdersOfAllTime(String[][] orders) {
-        this.orders = orders;
+    public OrdersOfAllTime(String[] strings) {
+        clientOrders = strings;
     }
 
-    public String[][] getOrders() {
-        return orders;
-    }
-
-    public void setOrders(String[][] orders) {
-        this.orders = orders;
-    }
-
-    public void printAllOrders() {
-        for (String[] strings : orders) {
-            System.out.println(Arrays.asList(strings));
+    //rework
+    public static void printAllOrders(String[] strings) {
+        for (String order : strings) {
+            String[] orderInfo = order.split("!");
+            for (String s : orderInfo) {
+                System.out.print(s + " ");
+                //System.out.printf("| %20s | %20s | %20s | %20s", pizzaOrder1, pizzaOrder2, pizzaOrder3, orderDate);
+            }
+            System.out.println();
         }
+    }
+
+    //testing
+    public static void main(String[] args) {
+        Client client = new Client();
+        client.setId(2);
+        printAllOrders(getOrdersFromDB(client));
     }
 }

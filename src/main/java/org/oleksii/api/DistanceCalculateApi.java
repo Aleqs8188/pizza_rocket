@@ -3,6 +3,10 @@ package org.oleksii.api;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
+import kong.unirest.json.JSONException;
+import kong.unirest.json.JSONObject;
+import org.oleksii.enums.ConsoleColor;
 
 public class DistanceCalculateApi {
     private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
@@ -18,20 +22,58 @@ public class DistanceCalculateApi {
         return distance;
     }
 
-    private static double getDistanceBetweenPostalCodes(String postalCode1, String postalCode2) throws Exception {
+    //    public static double getDistanceBetweenPostalCodes(String postalCode1, String postalCode2) throws Exception {
+//        String url1 = buildNominatimUrl(postalCode1);
+//        String url2 = buildNominatimUrl(postalCode2);
+//
+//        HttpResponse<JsonNode> response1 = Unirest.get(url1).header("accept", "application/json").asJson();
+//        kong.unirest.HttpResponse<kong.unirest.JsonNode> response2 = Unirest.get(url2).header("accept", "application/json").asJson();
+//        double lat1 = response1.getBody().getArray().getJSONObject(0).getDouble("lat");
+//        double lon1 = response1.getBody().getArray().getJSONObject(0).getDouble("lon");
+//        try {
+//            double lat2 = response2.getBody().getArray().getJSONObject(0).getDouble("lat");
+//            double lon2 = response2.getBody().getArray().getJSONObject(0).getDouble("lon");
+//            return calculateDistance(lat1, lon1, lat2, lon2);
+//        } catch (JSONException e) {
+//            while (true) {
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+//                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "You have entered an incorrect postal code" + ConsoleColor.RESET.getCode());
+//                System.out.print(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "Enter your correct postal code: " + ConsoleColor.RESET.getCode());
+//                String postalCode = reader.readLine();
+//                String url3 = buildNominatimUrl(postalCode);
+//                kong.unirest.HttpResponse<kong.unirest.JsonNode> response3 = Unirest.get(url3).header("accept", "application/json").asJson();
+//                double lat3 = response3.getBody().getArray().getJSONObject(0).getDouble("lat");
+//                double lon3 = response3.getBody().getArray().getJSONObject(0).getDouble("lon");
+//                double a = calculateDistance(lat1, lon1, lat3, lon3);
+//                if (a < 0) {
+//                } else {
+//                    return a;
+//                }
+//            }
+//        }
+//    }
+    private static double getDistanceBetweenPostalCodes(String postalCode1, String postalCode2) throws UnirestException {
         String url1 = buildNominatimUrl(postalCode1);
         String url2 = buildNominatimUrl(postalCode2);
 
         HttpResponse<JsonNode> response1 = Unirest.get(url1).header("accept", "application/json").asJson();
-        kong.unirest.HttpResponse<kong.unirest.JsonNode> response2 = Unirest.get(url2).header("accept", "application/json").asJson();
+        JSONObject body1 = response1.getBody().getArray().getJSONObject(0);
 
-        double lat1 = response1.getBody().getArray().getJSONObject(0).getDouble("lat");
-        double lon1 = response1.getBody().getArray().getJSONObject(0).getDouble("lon");
+        double lat1 = body1.getDouble("lat");
+        double lon1 = body1.getDouble("lon");
 
-        double lat2 = response2.getBody().getArray().getJSONObject(0).getDouble("lat");
-        double lon2 = response2.getBody().getArray().getJSONObject(0).getDouble("lon");
+        try {
+            HttpResponse<JsonNode> response2 = Unirest.get(url2).header("accept", "application/json").asJson();
+            JSONObject body2 = response2.getBody().getArray().getJSONObject(0);
 
-        return calculateDistance(lat1, lon1, lat2, lon2);
+            double lat2 = body2.getDouble("lat");
+            double lon2 = body2.getDouble("lon");
+
+            return calculateDistance(lat1, lon1, lat2, lon2);
+        } catch (JSONException ignored) {
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "You have entered an incorrect postal code" + ConsoleColor.RESET.getCode());
+        }
+        return -1;
     }
 
     private static String buildNominatimUrl(String postalCode) {
