@@ -139,7 +139,7 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "UPDATE clients SET orders = array_append(orders, ?) WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setString(1, printOrdersName() + "!" + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                preparedStatement.setString(1, printOrdersName() + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                 preparedStatement.setInt(2, idClient);
                 preparedStatement.executeUpdate();
             }

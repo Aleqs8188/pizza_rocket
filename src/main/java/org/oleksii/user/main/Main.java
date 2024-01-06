@@ -19,10 +19,7 @@ import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.g
 import static org.oleksii.user.orders.CurrentOrder.*;
 import static org.oleksii.user.orders.OrdersOfAllTime.printAllOrders;
 
-//1) make print OrdersOfAllTime
-//1/5) make button to order again
 //2) make print promo and communicate with him
-//3) make <----Back for clients in whole places
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
@@ -88,8 +85,13 @@ public class Main {
         while (true) {
             printSymbols();
             try {
+                System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want back - type ---> '9'" + ConsoleColor.RESET.getCode());
                 System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Enter pizza name you want to delete: " + ConsoleColor.RED.getCode());
                 String pizzaToDelete = reader.readLine();
+                if (pizzaToDelete.equals("9")) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                    return;
+                }
                 if (deleteObjectFromOrder(pizzaToDelete) == null) {
                     printSymbols();
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Enter correct name of Pizza..." + ConsoleColor.RESET.getCode());
@@ -119,7 +121,7 @@ public class Main {
             printOrders();
             printSymbols();
             System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what do you want to do: ");
-            System.out.print("1) Delete something from order || 2) Count total sum from order || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
+            System.out.print("1) Delete pizza from order || 2) Count total sum from order || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
             choice = scanner.nextInt();
             if (choice > 3) {
                 printSymbols();
@@ -137,8 +139,13 @@ public class Main {
         String pizzaName;
         while (true) {
             printSymbols();
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want back - type ---> '9'" + ConsoleColor.RESET.getCode());
             System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Enter the pizza name you want to purchase: " + ConsoleColor.RESET.getCode());
             pizzaName = reader.readLine();
+            if (pizzaName.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return null;
+            }
             if (getPizzaFromBDByParameters(pizzaName) != null) {
                 return pizzaName;
             } else {
@@ -168,7 +175,7 @@ public class Main {
     }
 
     public static int start_of_interaction_with_the_client() {
-        int choice = 0;
+        int choice;
 
         printSymbols();
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() +
@@ -217,15 +224,31 @@ public class Main {
         System.out.println("*Personal information: ");
         System.out.print("          -Name: ");
         String nameReg = reader.readLine();
+        if (nameReg.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         System.out.print("          -Surname: ");
         String surnameReg = reader.readLine();
+        if (surnameReg.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         String emailReg;
         String phoneReg;
         while (true) {
             System.out.print("          -Phone number: ");
             phoneReg = reader.readLine();
+            if (phoneReg.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "          -Email: ");
             emailReg = reader.readLine();
+            if (emailReg.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             Client clientWithSameParameters = searchClientInBD(emailReg, phoneReg);
             if (clientWithSameParameters.getId() != 0) {
                 printSymbols();
@@ -237,16 +260,32 @@ public class Main {
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Address information: ");
         System.out.print("          -Street: ");
         String streetReg = reader.readLine();
+        if (streetReg.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         System.out.print("          -City: ");
         String cityReg = reader.readLine();
+        if (cityReg.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         String postalCodeReg;
         do {
             System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "          -Postal code of Wroclaw: " + ConsoleColor.RESET.getCode());
             postalCodeReg = reader.readLine();
+            if (postalCodeReg.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
         } while (!(realizeAnOrder("50-001", postalCodeReg) > 0));
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Payment information:");
         System.out.print("          -Credit Card Number: " + ConsoleColor.RESET.getCode());
         String creditCardNumberReg = reader.readLine();
+        if (creditCardNumberReg.equals("9")) {
+            System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+            return;
+        }
         Client newClient = new Client(listSize + 1, nameReg, surnameReg, phoneReg, emailReg,
                 new Address(streetReg, cityReg, postalCodeReg), new PaymentInfo(creditCardNumberReg, new Address(streetReg, cityReg, postalCodeReg)));
         if (addClientToBD(newClient)) {
@@ -260,13 +299,26 @@ public class Main {
     public static void login_client() throws IOException {
         while (true) {
             printSymbols();
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.RED.getCode() + "If you want back - type ---> '9'" + ConsoleColor.RESET.getCode());
             System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Please, enter your data to Log in:");
             System.out.print("          -Email: ");
             String emailLog = reader.readLine();
+            if (emailLog.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             System.out.print("          -Phone number: ");
             String phoneNumberLog = reader.readLine();
+            if (phoneNumberLog.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             System.out.print("          -Credit card number: " + ConsoleColor.RESET.getCode());
             String creditCardNumberLog = reader.readLine();
+            if (creditCardNumberLog.equals("9")) {
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
+                return;
+            }
             clientLog = searchClientInBD(emailLog, phoneNumberLog, creditCardNumberLog);
             if (clientLog.getId() == 0) {
                 printSymbols();
@@ -286,9 +338,14 @@ public class Main {
                 case 1:
                     switch (start_of_interaction_with_the_shopping_cart()) {
                         case 1:
-                            order.add(getPizzaFromBDByParameters(start_of_selecting_pizza()));
-                            printSymbols();
-                            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*This pizza has been successfully added to your order!" + ConsoleColor.RESET.getCode());
+                            String test = start_of_selecting_pizza();
+                            if (test == null) {
+                                break;
+                            } else {
+                                order.add(getPizzaFromBDByParameters(test));
+                                printSymbols();
+                                System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Pizza '" + test + "' has been successfully added to your order!" + ConsoleColor.RESET.getCode());
+                            }
                             break;
                         case 2:
                             switch (start_of_managing_with_orders()) {

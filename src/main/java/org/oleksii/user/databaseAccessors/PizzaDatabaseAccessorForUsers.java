@@ -11,7 +11,7 @@ public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
         ArrayList<Pizza> pizzaArrayList = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM pizzas ORDER BY id ASC";
+            String sql = "SELECT * FROM pizzas ORDER BY id ";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {

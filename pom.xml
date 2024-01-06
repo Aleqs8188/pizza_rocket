@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.denys</groupId>
+    <groupId>org.oleksii</groupId>
     <artifactId>PizzaRocket</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -45,8 +45,6 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
-
-
     </dependencies>
 
 </project>

@@ -46,7 +46,7 @@ public class CurrentOrder {
     public static String printOrdersName() {
         StringBuilder a = new StringBuilder();
         for (Pizza p : order) {
-            a.append("'").append(p.getName()).append("'");
+            a.append(p.getName()).append("!");
         }
         return a.toString();
     }
