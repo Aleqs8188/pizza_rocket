@@ -1,5 +1,6 @@
 package org.oleksii.user.main;
 
+import org.oleksii.admin.promotional_code_for_admin.Promo;
 import org.oleksii.enums.ConsoleColor;
 import org.oleksii.pizzas.PizzasList;
 import org.oleksii.user.client.Client;
@@ -10,17 +11,22 @@ import org.oleksii.user.orders.OrdersOfAllTime;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static org.oleksii.user.client.ClientsList.clientArrayList;
 import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.*;
-import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers.getPizzaFromBDByParameters;
+import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUser.getPizzaFromBDByParameters;
+import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.checker_deleter_promos;
+import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.get_active_promo_from_db;
 import static org.oleksii.user.orders.CurrentOrder.*;
 import static org.oleksii.user.orders.OrdersOfAllTime.printAllOrders;
 
-//2) make print promo and communicate with him
-
+// 1) Reviews and ratings
+// 2) Create especial pizza
+// 3) Administrator and client activity
+// 4) Reset the administrator password and save
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -41,7 +47,7 @@ public class Main {
         }
     }
 
-    public static void make_an_order_for_client() {
+    public static void make_an_order_for_client(Promo promo) {
         printSymbols();
         if (totalSum() == 0) {
             System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Your shopping basket is empty... To make an order you need to order at least 1 pizza!" + ConsoleColor.RESET.getCode());
@@ -54,7 +60,13 @@ public class Main {
             printSymbols();
             double costDelivery = distance * 2;
             double sumOfOrderAndDelivery = costDelivery + totalSum();
-            display_order_summary(distance, costDelivery, sumOfOrderAndDelivery);
+            int discount = 0;
+            double finalCost = 0;
+            if (promo != null) {
+                discount = promo.getDiscount();
+                finalCost = sumOfOrderAndDelivery - (discount * sumOfOrderAndDelivery / 100);
+            }
+            display_order_summary(distance, costDelivery, sumOfOrderAndDelivery, discount, finalCost);
             addAnOrderToDB(clientLog);
             System.exit(0);
         }
@@ -157,20 +169,27 @@ public class Main {
 
     public static int start_of_interaction_with_the_shopping_cart() {
         while (true) {
-            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "***********************************************************************************MENU**************************************************************************************" + ConsoleColor.RESET.getCode());
-            PizzasList pizzasList = new PizzasList();
-            pizzasList.print_pizzas();
-            printSymbols();
-            System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
-            System.out.print("1) Add to shopping cart || 2) Check my shopping cart || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 3) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-                continue;
-            } else if (choice == 3) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+            try {
+                System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "***********************************************************************************MENU**************************************************************************************" + ConsoleColor.RESET.getCode());
+                PizzasList pizzasList = new PizzasList();
+                pizzasList.print_pizzas();
+                printSymbols();
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
+                System.out.print("1) Add to shopping cart || 2) Check my shopping cart || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
-            return choice;
         }
     }
 
@@ -178,10 +197,10 @@ public class Main {
         int choice;
 
         printSymbols();
-        System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() +
+        System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() +
                 "*Remember, that delivery is not free, for distances " +
                 ConsoleColor.RED.getCode() + "over 2 kilometers, " +
-                ConsoleColor.CYAN.getCode() + "the delivery cost is " +
+                ConsoleColor.GREEN.getCode() + "the delivery cost is " +
                 ConsoleColor.RED.getCode() + "2 PLN per kilometer!");
 
         while (true) {
@@ -220,6 +239,7 @@ public class Main {
     public static void registration_new_client() throws IOException {
         int listSize = clientArrayList.size();
         printSymbols();
+        System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "If you want to Log in - type ---> '9'" + ConsoleColor.RESET.getCode());
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "-Please, enter your data to register: ");
         System.out.println("*Personal information: ");
         System.out.print("          -Name: ");
@@ -332,7 +352,14 @@ public class Main {
             }
         }
         assert clientLog != null;
+        checker_deleter_promos();
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Hello '" + clientLog.getFirstName() + " " + clientLog.getLastName() + "', you are in PizzaRocket!");
+        Promo promo = get_active_promo_from_db();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        if (promo != null) {
+            System.out.println(ConsoleColor.GREEN.getCode() + "You have '" + ConsoleColor.RED.getCode() + promo.getDiscount() + ConsoleColor.GREEN.getCode() + "%' rebate for your order! The promo is valid until " + ConsoleColor.RED.getCode() + promo.getEnd_date().format(formatter) + ConsoleColor.RESET.getCode());
+            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + promo.getDescription());
+        }
         while (true) {
             switch (start_of_interaction_with_the_client()) {
                 case 1:
@@ -363,14 +390,55 @@ public class Main {
                     }
                     break;
                 case 2:
-                    print_orders_of_all_time_for_client();
-                    //make button to order again
+                    switch (start_of_managing_with_orders_from_all_time()) {
+                        case 1:
+                            clear_history_orders_from_all_time();
+                            break;
+                        case 2:
+                            //!
+                            break;
+                        case 3:
+                            //!
+                            break;
+                    }
                     break;
                 case 3:
-                    make_an_order_for_client();
+                    make_an_order_for_client(promo);
                     break;
                 case 4:
                     return;
+            }
+        }
+    }
+
+    private static void clear_history_orders_from_all_time() {
+        if (clear_orders_in_db(clientLog)) {
+            printSymbols();
+            System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Your order history has been cleared!" + ConsoleColor.RESET.getCode());
+        }
+    }
+
+    // rework
+    private static int start_of_managing_with_orders_from_all_time() {
+        while (true) {
+            try {
+                print_orders_of_all_time_for_client();
+                printSymbols();
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
+                System.out.print("1) Clear history of orders || 2)  || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
         }
     }

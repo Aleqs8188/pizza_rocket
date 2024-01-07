@@ -20,10 +20,13 @@ public class OrdersOfAllTime extends Client {
         System.out.printf(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "%-12s%-10s", "Date:", "Time:");
 
         for (int i = 1; i <= getMaxItems(strings); i++) {
+            if (i == 6) {
+                break;
+            }
             System.out.printf("%-25s", "Pizza: " + i);
         }
 
-        System.out.println(ConsoleColor.BLUE.getCode()); // Переход на новую строку для данных
+        System.out.println(ConsoleColor.BLUE.getCode());
 
         for (String order : strings) {
             String[] orderInfo = order.split("!");
@@ -39,6 +42,9 @@ public class OrdersOfAllTime extends Client {
             System.out.printf("%-12s%-10s", dateToPrint, timeToPrint);
 
             for (int i = 0; i < orderInfo.length - 1; i++) {
+                if (i == 5) {
+                    System.out.print("\n                      ");
+                }
                 System.out.printf("%-25s", "'" + orderInfo[i] + "'");
             }
 
@@ -53,11 +59,5 @@ public class OrdersOfAllTime extends Client {
             maxItems = Math.max(maxItems, orderInfo.length - 1);
         }
         return maxItems;
-    }
-
-    public static void main(String[] args) {
-        Client client = new Client();
-        client.setId(1);
-        printAllOrders(getOrdersFromDB(client));
     }
 }

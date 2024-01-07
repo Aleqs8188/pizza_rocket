@@ -7,7 +7,7 @@ public class Admin {
     private String username;
     private String salt;
     private String hashedPassword;
-
+    private String secret_code;
 
     public Admin(int id, String name, String surname, String username, String hashedPassword, String salt) {
         this.id = id;
@@ -16,6 +16,16 @@ public class Admin {
         this.username = username;
         this.salt = salt;
         this.hashedPassword = hashedPassword;
+    }
+
+    public Admin(int id, String name, String surname, String username, String hashedPassword, String salt, String secret_code) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.salt = salt;
+        this.hashedPassword = hashedPassword;
+        this.secret_code = secret_code;
     }
 
     public Admin(String name, String surname, String username, String hashedPassword, String salt) {

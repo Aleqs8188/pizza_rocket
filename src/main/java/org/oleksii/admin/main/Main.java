@@ -1,7 +1,7 @@
 package org.oleksii.admin.main;
 
-import org.oleksii.admin.promotional_code.Promo;
-import org.oleksii.admin.promotional_code.PromoList;
+import org.oleksii.admin.promotional_code_for_admin.Promo;
+import org.oleksii.admin.promotional_code_for_admin.PromoList;
 import org.oleksii.admin.super_users.chief_administrator.SuperAdmin;
 import org.oleksii.admin.super_users.default_administrator.Admin;
 import org.mindrot.jbcrypt.BCrypt;
@@ -16,12 +16,15 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.*;
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.getAdminFromDB;
-import static org.oleksii.admin.databaseAccessors.PizzaDatabaseAccessorForAdmins.*;
-import static org.oleksii.admin.databaseAccessors.PromoDatabaseAccessor.*;
+import static org.oleksii.admin.databaseAccessors.PizzaDatabaseAccessorForAdmin.*;
+import static org.oleksii.admin.databaseAccessors.PromoDatabaseAccessorForAdmin.*;
+import static org.oleksii.admin.super_users.default_administrator.AdminsList.print_details_about_admin;
+import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.checker_deleter_promos;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
@@ -44,6 +47,7 @@ public class Main {
     }
 
     public static void login_to_admin() throws IOException {
+        checker_deleter_promos();
         firstCaseLoop:
         while (true) {
             printSymbols();
@@ -63,7 +67,7 @@ public class Main {
                 } else {
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "There is no administrator with this username..." + ConsoleColor.RESET.getCode());
                     if (counter1 >= 5) {
-                        System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "If you do not remember your 'username', contact the main administrator..." + ConsoleColor.RESET.getCode());
+                        reset_username();
                         break firstCaseLoop;
                     }
                 }
@@ -82,6 +86,7 @@ public class Main {
                 } else {
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "The password is not correct..." + ConsoleColor.RESET.getCode());
                     if (counter_2 >= 5) {
+                        printSymbols();
                         System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "If you do not remember your 'password', contact the main administrator..." + ConsoleColor.RESET.getCode());
                         break firstCaseLoop;
                     }
@@ -97,21 +102,135 @@ public class Main {
                         main_promo();
                         break;
                     case 3:
+                        main_recovery_code(adminLog);
+                        break;
+                    case 4:
                         return;
                 }
             }
         }
     }
 
+    public static void main_recovery_code(Admin admin) throws IOException {
+        switch (start_managing_recovery_code()) {
+            case 1:
+                check_recovery_code(admin);
+                break;
+            case 2:
+                make_change_my_code(admin);
+                break;
+            case 3:
+                break;
+        }
+    }
+
+    private static void make_change_my_code(Admin admin) throws IOException {
+        String secret_code = get_secret_code_from_db(admin);
+        printSymbols();
+        if (secret_code == null) {
+            System.out.print(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Enter a secret code that only you know: " + ConsoleColor.RESET.getCode());
+            String secret_code_register = reader.readLine();
+            if (searcher_the_same_secret_code(secret_code_register) == null) {
+                changer_secret_code(admin, secret_code_register);
+                printSymbols();
+                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Your secret code has been created!" + ConsoleColor.RESET.getCode());
+            } else {
+                printSymbols();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Doesn't fit" + ConsoleColor.RESET.getCode());
+            }
+        } else {
+            System.out.print(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Enter your old secret code: " + ConsoleColor.RESET.getCode());
+            String old_secret_code = reader.readLine();
+            if (secret_code.equals(old_secret_code)) {
+                System.out.print(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Enter your new secret code: " + ConsoleColor.RESET.getCode());
+                String new_secret_code = reader.readLine();
+                if (searcher_the_same_secret_code(new_secret_code) == null) {
+                    changer_secret_code(admin, new_secret_code);
+                    save_changes_to_db(admin, "Secret code", old_secret_code, new_secret_code);
+                    printSymbols();
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Your secret code has been changed!" + ConsoleColor.RESET.getCode());
+                }
+            } else {
+                printSymbols();
+                System.out.println(ConsoleColor.RED.getCode() + "Incorrect!" + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
+    public static void check_recovery_code(Admin admin) throws IOException {
+        String secret_code = get_secret_code_from_db(admin);
+        printSymbols();
+        if (secret_code == null) {
+            System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.BLACK.getCode() + "You need make your secret code!" + ConsoleColor.RESET.getCode());
+            make_change_my_code(admin);
+            return;
+        }
+        System.out.println(ConsoleColor.BOLD.getCode() + ConsoleColor.BLACK.getCode() + secret_code + ConsoleColor.RESET.getCode());
+    }
+
+    public static int start_managing_recovery_code() {
+        while (true) {
+            try {
+                printSymbols();
+                System.out.print("(1) Check my code || (2) Make/change my code || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
+    private static void reset_username() throws IOException {
+        printSymbols();
+        System.out.println(ConsoleColor.BOLD.getCode() + "If you don`t remember your username, you need enter your secret code, to reset.");
+        printSymbols();
+        System.out.print(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Enter secret code: " + ConsoleColor.RESET.getCode());
+        String secretCode = reader.readLine();
+        Admin admin = get_admin_by_secret_code(secretCode);
+        if (admin != null) {
+            String old_username = admin.getUsername();
+            while (true) {
+                System.out.print(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "Enter new Username: " + ConsoleColor.RESET.getCode());
+                String newUsername = reader.readLine();
+                if (getAdminFromDB(newUsername) == null) {
+                    if (change_username_for_admin_in_db(admin, newUsername)) {
+                        printSymbols();
+                        System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Your username successfully changed!" + ConsoleColor.RESET.getCode());
+                        if (save_changes_to_db(admin, "Username", old_username, newUsername)) {
+                            return;
+                        }
+                    }
+                } else {
+                    printSymbols();
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "This username is already taken!" + ConsoleColor.RESET.getCode());
+                    printSymbols();
+                }
+            }
+        } else {
+            printSymbols();
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect secret code..." + ConsoleColor.RESET.getCode());
+        }
+    }
+
     public static int start_managing_for_admin() {
         while (true) {
             printSymbols();
-            System.out.print("(1) Managing pizza || (2) Managing promo || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
+            System.out.print("(1) Managing pizza || (2) Managing promo || (3) Recovery code || " + ConsoleColor.RED.getCode() + "(4) Exit ---| " + ConsoleColor.RESET.getCode());
             choice = scanner.nextInt();
-            if (choice > 3) {
+            if (choice > 4) {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
                 continue;
-            } else if (choice == 3) {
+            } else if (choice == 4) {
                 System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
             }
             return choice;
@@ -186,6 +305,9 @@ public class Main {
                     delete_administrator();
                     break;
                 case 3:
+                    print_details_about_admin();
+                    break;
+                case 4:
                     return;
             }
         }
@@ -465,33 +587,47 @@ public class Main {
 
     public static int start_login() {
         while (true) {
-            printSymbols();
-            System.out.print("(1) ADMIN ||| (2) CHIEF ADMIN || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 3) {
+            try {
                 printSymbols();
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-                continue;
-            } else if (choice == 3) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                System.out.print("(1) ADMIN ||| (2) CHIEF ADMIN || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    printSymbols();
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                    printSymbols();
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
                 printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
-            return choice;
         }
     }
 
     public static int start_managing_for_super_admin() {
         while (true) {
-            printSymbols();
-            System.out.print("(1) Managing Administrators || " + ConsoleColor.RED.getCode() + "(2) Exit ---| " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 2) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-                continue;
-            } else if (choice == 2) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+            try {
+                printSymbols();
+                System.out.print("(1) Managing Administrators || " + ConsoleColor.RED.getCode() + "(2) Exit ---| " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 2) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 2) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
-            return choice;
         }
     }
 
@@ -500,11 +636,11 @@ public class Main {
         printSymbols();
         admins.printAllAdmins();
         printSymbols();
-        System.out.print("(1) Add new administrator || (2) Delete administrator || " + ConsoleColor.RED.getCode() + "(3) Back ---| " + ConsoleColor.RESET.getCode());
+        System.out.print("(1) Add new administrator || (2) Delete administrator || (3) Get details about administrator || " + ConsoleColor.RED.getCode() + "(4) Back ---| " + ConsoleColor.RESET.getCode());
         choice = scanner.nextInt();
-        if (choice > 3) {
+        if (choice > 4) {
             System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-        } else if (choice == 3) {
+        } else if (choice == 4) {
             System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
         }
         return choice;
@@ -726,6 +862,6 @@ public class Main {
     }
 
     public static void printSymbols() {
-        System.out.println(ConsoleColor.BLUE.getCode() + "*****************************************************************************************************************************************************************************" + ConsoleColor.RESET.getCode());
+        System.out.println(ConsoleColor.BLUE.getCode() + "******************************************************************************************************************************************************************************" + ConsoleColor.RESET.getCode());
     }
 }

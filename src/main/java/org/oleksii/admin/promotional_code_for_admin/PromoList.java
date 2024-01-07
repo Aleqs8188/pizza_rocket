@@ -1,10 +1,10 @@
-package org.oleksii.admin.promotional_code;
+package org.oleksii.admin.promotional_code_for_admin;
 
 import org.oleksii.enums.ConsoleColor;
 
 import java.util.ArrayList;
 
-import static org.oleksii.admin.databaseAccessors.PromoDatabaseAccessor.get_promos_from_db;
+import static org.oleksii.admin.databaseAccessors.PromoDatabaseAccessorForAdmin.get_promos_from_db;
 
 public class PromoList extends Promo {
     private final ArrayList<Promo> promoArrayList = get_promos_from_db();
@@ -13,7 +13,7 @@ public class PromoList extends Promo {
         int counter = 1;
         for (Promo promo : promoArrayList) {
             System.out.println(ConsoleColor.BLINK.getCode() + ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+----+------------------+------------+------------------------------+------------------------------+----------------+--------------------------------------------------------");
-            System.out.println("| ID |       Name       | Discount % |     Date of create promo     |        End promo date        |  Active promo  |");
+            System.out.println("| ID |       Name       | Discount % |      Last modified date      |        End promo date        |  Active promo  |");
             System.out.println("+----+------------------+------------+------------------------------+------------------------------+----------------+--------------------------------------------------------");
             String coloredPromo = String.valueOf(promo.isIs_active());
             if (coloredPromo.equals("false")) {
@@ -24,7 +24,7 @@ public class PromoList extends Promo {
                     counter,
                     promo.getName(),
                     promo.getDiscount() + "%",
-                    promo.getDate_of_creation(),
+                    promo.getLast_modified_date(),
                     promo.getEnd_date(),
                     coloredPromo);
             counter++;

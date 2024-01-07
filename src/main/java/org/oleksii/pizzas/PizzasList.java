@@ -1,12 +1,12 @@
 package org.oleksii.pizzas;
 
 import org.oleksii.enums.ConsoleColor;
-import org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUsers;
+import org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUser;
 
 import java.util.ArrayList;
 
 public class PizzasList extends Pizza {
-    ArrayList<Pizza> pizzaArrayList = PizzaDatabaseAccessorForUsers.getPizzasFromBD();
+    ArrayList<Pizza> pizzaArrayList = PizzaDatabaseAccessorForUser.getPizzasFromBD();
 
     public void print_pizzas() {
         int counter = 1;

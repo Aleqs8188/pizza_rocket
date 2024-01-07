@@ -86,12 +86,17 @@ public class CurrentOrder {
         return null;
     }
 
-    public static void display_order_summary(double distance, double deliveryCost, double totalCost) {
+    public static void display_order_summary(double distance, double deliveryCost, double totalCost, int discount, double finalCost) {
+        if (finalCost == 0) {
+            finalCost = totalCost;
+        }
         String distanceToPrint = timeToDeliver(distance);
         String deliveryTimeStr = "Estimated Delivery Time: " + distanceToPrint;
         String distanceStr = "Distance: " + new DecimalFormat("0.00").format(distance) + " km";
         String deliveryCostStr = "Delivery Cost: " + new DecimalFormat("0.00").format(deliveryCost) + " PLN";
-        String totalCostStr = "Total Cost: " + new DecimalFormat("0.00").format(totalCost) + " PLN";
+        String totalCostStr = "Total Cost without discount: " + new DecimalFormat("0.00").format(totalCost) + " PLN";
+        String discountStr = "Discount: " + discount + "%";
+        String finalCostStr = "Total Cost with discount: " + new DecimalFormat("0.00").format(finalCost) + " PLN";
 
         System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "+------------------------------------------------------------+");
         System.out.println("|                     Your Order Details                     |");
@@ -100,6 +105,8 @@ public class CurrentOrder {
         System.out.printf("| %-58s |\n", distanceStr);
         System.out.printf("| %-58s |\n", deliveryCostStr);
         System.out.printf("| %-58s |\n", totalCostStr);
+        System.out.printf("| %-58s |\n", discountStr);
+        System.out.printf("| %-58s |\n", finalCostStr);
         System.out.println("+------------------------------------------------------------+");
         System.out.println("|               Thank You for Your Order.                    |");
         System.out.println("+------------------------------------------------------------+" + ConsoleColor.RESET.getCode());

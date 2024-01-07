@@ -1,4 +1,4 @@
-package org.oleksii.admin.promotional_code;
+package org.oleksii.admin.promotional_code_for_admin;
 
 import java.time.LocalDateTime;
 
@@ -7,28 +7,28 @@ public class Promo {
     private String name;
     private int discount;
     private String description;
-    private LocalDateTime date_of_creation;
+    private LocalDateTime last_modified_date;
     private LocalDateTime end_date;
     private boolean is_active;
 
     public Promo() {
     }
 
-    public Promo(String name, int discount, String description, LocalDateTime date_of_creation, LocalDateTime end_date, boolean is_active) {
+    public Promo(String name, int discount, String description, LocalDateTime last_modified_date, LocalDateTime end_date, boolean is_active) {
         this.name = name;
         this.discount = discount;
         this.description = description;
-        this.date_of_creation = date_of_creation;
+        this.last_modified_date = last_modified_date;
         this.end_date = end_date;
         this.is_active = is_active;
     }
 
-    public Promo(int id, String name, int discount, String description, LocalDateTime date_of_creation, LocalDateTime end_date, boolean is_active) {
+    public Promo(int id, String name, int discount, String description, LocalDateTime last_modified_date, LocalDateTime end_date, boolean is_active) {
         this.id = id;
         this.name = name;
         this.discount = discount;
         this.description = description;
-        this.date_of_creation = date_of_creation;
+        this.last_modified_date = last_modified_date;
         this.end_date = end_date;
         this.is_active = is_active;
     }
@@ -53,8 +53,8 @@ public class Promo {
         return description;
     }
 
-    public LocalDateTime getDate_of_creation() {
-        return date_of_creation;
+    public LocalDateTime getLast_modified_date() {
+        return last_modified_date;
     }
 
     public LocalDateTime getEnd_date() {

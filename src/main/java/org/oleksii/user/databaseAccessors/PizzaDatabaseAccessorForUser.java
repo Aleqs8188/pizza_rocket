@@ -5,7 +5,7 @@ import org.oleksii.pizzas.Pizza;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class PizzaDatabaseAccessorForUsers extends DatabaseAccessor {
+public class PizzaDatabaseAccessorForUser extends DatabaseAccessor {
 
     public static ArrayList<Pizza> getPizzasFromBD() {
         ArrayList<Pizza> pizzaArrayList = new ArrayList<>();

@@ -172,4 +172,18 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
         }
         return orders;
     }
+
+    public static boolean clear_orders_in_db(Client client) {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
+            String sql = "UPDATE clients SET orders = null WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, client.getId());
+                preparedStatement.executeUpdate();
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

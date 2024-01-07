@@ -4,7 +4,7 @@ import org.oleksii.pizzas.Pizza;
 
 import java.sql.*;
 
-public class PizzaDatabaseAccessorForAdmins extends DatabaseAccessor {
+public class PizzaDatabaseAccessorForAdmin extends DatabaseAccessor {
     public static Pizza get_pizza_from_db_by_name(String parameterValue1) {
         Pizza myObject = null;
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
@@ -30,7 +30,7 @@ public class PizzaDatabaseAccessorForAdmins extends DatabaseAccessor {
         return myObject;
     }
 
-    public static boolean add_pizza_to_db(Pizza pizza) {
+    public static void add_pizza_to_db(Pizza pizza) {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "INSERT INTO pizzas (name, description, price, size, ingredients, type, rating) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -43,12 +43,10 @@ public class PizzaDatabaseAccessorForAdmins extends DatabaseAccessor {
                 preparedStatement.setString(7, pizza.getRating());
 
                 preparedStatement.executeUpdate();
-                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     public static boolean delete_pizza_from_db(String parameterValue) {
