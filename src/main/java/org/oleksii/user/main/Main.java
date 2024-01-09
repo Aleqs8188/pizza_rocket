@@ -3,6 +3,7 @@ package org.oleksii.user.main;
 import org.oleksii.admin.promotional_code_for_admin.Promo;
 import org.oleksii.enums.ConsoleColor;
 import org.oleksii.pizzas.PizzasList;
+import org.oleksii.reviews.ReviewList;
 import org.oleksii.user.client.Client;
 import org.oleksii.user.info.Address;
 import org.oleksii.user.info.PaymentInfo;
@@ -20,6 +21,7 @@ import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.*;
 import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUser.getPizzaFromBDByParameters;
 import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.checker_deleter_promos;
 import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.get_active_promo_from_db;
+import static org.oleksii.user.databaseAccessors.ReviewDatabaseAccessor.*;
 import static org.oleksii.user.orders.CurrentOrder.*;
 import static org.oleksii.user.orders.OrdersOfAllTime.printAllOrders;
 
@@ -211,15 +213,16 @@ public class Main {
                 System.out.print("1) Check the Menu and add items to the list || " +
                         "2) Check all my orders for all time || " +
                         "3) Make an order || " +
-                        ConsoleColor.RED.getCode() + "4) Exit --- ");
+                        "4) View/write a review || " +
+                        ConsoleColor.RED.getCode() + "5) Exit --- ");
 
                 choice = scanner.nextInt();
 
-                if (choice > 4) {
+                if (choice > 5) {
                     printSymbols();
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
                             "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
-                } else if (choice == 4) {
+                } else if (choice == 5) {
                     System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() +
                             "<---Exit" + ConsoleColor.RESET.getCode());
                     break;
@@ -406,10 +409,109 @@ public class Main {
                     make_an_order_for_client(promo);
                     break;
                 case 4:
+                    switch (start_review_for_client()) {
+                        case 1:
+                            ReviewList reviewList;
+                            switch (start_ordered_review_for_client()) {
+                                case 1:
+                                    reviewList = new ReviewList(get_reviews_from_db_ordered_by_old_date());
+                                    reviewList.print_reviews();
+                                    break;
+                                case 2:
+                                    reviewList = new ReviewList(get_reviews_from_db_ordered_by_new_date());
+                                    reviewList.print_reviews();
+                                    break;
+                                case 3:
+                                    reviewList = new ReviewList(get_reviews_from_db_ordered_by_best_rating());
+                                    reviewList.print_reviews();
+                                    break;
+                                case 4:
+                                    reviewList = new ReviewList(get_reviews_from_db_ordered_by_worst_rating());
+                                    reviewList.print_reviews();
+                                    break;
+                            }
+                            break;
+                        case 2:
+                            write_review_for_client();
+                            break;
+                        case 3:
+                            return;
+                    }
+                    break;
+                case 5:
                     return;
             }
         }
     }
+
+    private static int start_ordered_review_for_client() {
+        while (true) {
+            try {
+                printSymbols();
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
+                System.out.print("1) Sort by new reviews || 2) Sorted by old reviews || 3) Sort by best reviews || 4) Sort by worst reviews || " + ConsoleColor.RED.getCode() + "5) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 5) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 5) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
+    private static void write_review_for_client() throws IOException {
+        while (true) {
+            printSymbols();
+            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "Enter rating of my Delivery Application (*-*****): " + ConsoleColor.RESET.getCode());
+            String rating = reader.readLine();
+            if (!rating.matches("^\\*.*")) {
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "Enter rating from '*' to '*****'" + ConsoleColor.RESET.getCode());
+                continue;
+            }
+            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "Enter review: " + ConsoleColor.RESET.getCode());
+            String description = reader.readLine();
+            if (add_review_to_db(rating, description, clientLog.getId())) {
+                printSymbols();
+                System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Your review has been left" + ConsoleColor.RESET.getCode());
+                return;
+            } else {
+                printSymbols();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Something went wrong, try again" + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
+    private static int start_review_for_client() {
+        while (true) {
+            try {
+                printSymbols();
+                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
+                System.out.print("1) View reviews || 2) Leave feedback || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
 
     private static void clear_history_orders_from_all_time() {
         if (clear_orders_in_db(clientLog)) {
@@ -445,19 +547,25 @@ public class Main {
 
     public static int start_for_client_registration_login() {
         while (true) {
-            printSymbols();
-            System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "Hello, you are in my 'Delivery Application (PizzaRocket)'\n" +
-                    "Choose what do you want to do: 1) Registration / 2) Log in --- " + ConsoleColor.RESET.getCode());
-            choice = scanner.nextInt();
-            if (choice > 3) {
-                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+            try {
                 printSymbols();
-                continue;
-            } else if (choice == 3) {
-                System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "Hello, you are in my 'Delivery Application (PizzaRocket)'\n" +
+                        "Choose what do you want to do: 1) Registration / 2) Log in --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                    printSymbols();
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
                 printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
-            return choice;
         }
     }
 

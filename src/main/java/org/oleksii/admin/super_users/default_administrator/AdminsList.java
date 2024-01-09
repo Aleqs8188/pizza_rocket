@@ -50,7 +50,7 @@ public class AdminsList extends Admin {
             return;
         }
         System.out.printf(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "%-12s%-10s", "Date:", "Time:");
-        System.out.printf("%-23s %-23s %-23s", "Reason:", "Old Username:", "New Username:");
+        System.out.printf("%-23s %-23s %-23s", "Reason:", "Old Value:", "New Value:");
 
 
         System.out.println(ConsoleColor.BLUE.getCode());

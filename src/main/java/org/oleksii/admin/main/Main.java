@@ -477,6 +477,7 @@ public class Main {
             }
             if (get_promo_from_db_by_name(name)) {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "*An promo with name '" + name + "' already exists");
+                printSymbols();
                 System.out.println("*Choose new name for promo" + ConsoleColor.RESET.getCode());
             } else {
                 break;

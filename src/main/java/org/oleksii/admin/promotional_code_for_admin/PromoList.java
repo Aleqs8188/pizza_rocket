@@ -20,7 +20,7 @@ public class PromoList extends Promo {
                 coloredPromo = ConsoleColor.RED.getCode() + coloredPromo;
             }
             String formattedString = String.format(ConsoleColor.MAGENTA.getCode() + ConsoleColor.BOLD.getCode() +
-                            "|%3s | %-16s | %-10s | %-28s | %-29s| %-14s |",
+                            "|%3s | %-16s | %-10s | %-28s | %-29s| %-14s ",
                     counter,
                     promo.getName(),
                     promo.getDiscount() + "%",
