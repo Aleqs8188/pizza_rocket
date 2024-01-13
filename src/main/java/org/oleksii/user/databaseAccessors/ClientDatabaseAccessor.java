@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import static org.oleksii.user.orders.CurrentOrder.order;
 import static org.oleksii.user.orders.CurrentOrder.printOrdersName;
 
 public class ClientDatabaseAccessor extends DatabaseAccessor {
@@ -36,8 +35,8 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                     clientArrayList.add(client);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return clientArrayList;
     }
@@ -59,8 +58,8 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -92,8 +91,8 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                     return myObject;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         } catch (NullPointerException e) {
             e.getMessage();
         }
@@ -126,13 +125,13 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                     return myObject;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return myObject;
     }
 
-    public static boolean addAnOrderToDB(Client client) {
+    public static void addAnOrderToDB(Client client) {
         LocalDateTime date = LocalDateTime.now();
         int idClient = client.getId();
 
@@ -143,11 +142,9 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.setInt(2, idClient);
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        } catch (SQLException ignored) {
+
         }
-        return true;
     }
 
     public static String[] getOrdersFromDB(Client client) {
@@ -167,8 +164,8 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                     }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return orders;
     }
@@ -181,8 +178,8 @@ public class ClientDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }

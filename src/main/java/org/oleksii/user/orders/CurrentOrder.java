@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import static org.oleksii.api.DistanceCalculateApi.getResultOfDistance;
 
 public class CurrentOrder {
+
     public static ArrayList<Pizza> order = new ArrayList<>();
 
     public static void printOrders() {

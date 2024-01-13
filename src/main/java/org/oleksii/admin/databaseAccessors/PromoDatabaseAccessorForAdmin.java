@@ -27,8 +27,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                     promoArrayList.add(promo);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return promoArrayList;
     }
@@ -50,8 +50,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
 
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
     }
 
@@ -66,8 +66,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 preparedStatement.setString(2, parameterValue1);
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
     }
 
@@ -82,8 +82,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                     return true;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -97,8 +97,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -113,8 +113,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.setString(2, parameterValue2);
                 statement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
     }
 
@@ -129,8 +129,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -145,8 +145,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -163,8 +163,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -181,8 +181,8 @@ public class PromoDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }

@@ -24,8 +24,7 @@ public class PizzaDatabaseAccessorForAdmin extends DatabaseAccessor {
                             resultSet.getString("rating"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return myObject;
     }
@@ -44,8 +43,7 @@ public class PizzaDatabaseAccessorForAdmin extends DatabaseAccessor {
 
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
     }
 
@@ -57,8 +55,7 @@ public class PizzaDatabaseAccessorForAdmin extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return false;
     }

@@ -16,8 +16,7 @@ public class DistanceCalculateApi {
         double distance = 0;
         try {
             distance = getDistanceBetweenPostalCodes(postalCode1, postalCode2);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
         return distance;
     }

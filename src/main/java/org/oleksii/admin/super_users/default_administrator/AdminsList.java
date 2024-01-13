@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.getAdminsFromDB;
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.getChangesFromDB;
-import static org.oleksii.admin.main.Main.printSymbols;
+import static org.oleksii.admin.main.AdminMain.printSymbols;
 
 public class AdminsList extends Admin {
     private final ArrayList<Admin> adminArrayList = getAdminsFromDB();
@@ -51,7 +51,6 @@ public class AdminsList extends Admin {
         }
         System.out.printf(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "%-12s%-10s", "Date:", "Time:");
         System.out.printf("%-23s %-23s %-23s", "Reason:", "Old Value:", "New Value:");
-
 
         System.out.println(ConsoleColor.BLUE.getCode());
 

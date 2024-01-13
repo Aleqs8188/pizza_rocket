@@ -26,8 +26,7 @@ public class PromoDatabaseAccessorForUser extends DatabaseAccessor {
                     promoArrayList.add(promo);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return promoArrayList;
     }
@@ -39,8 +38,7 @@ public class PromoDatabaseAccessorForUser extends DatabaseAccessor {
                 statement.setString(1, parameterValue);
                 statement.executeUpdate();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
     }
 
@@ -71,11 +69,8 @@ public class PromoDatabaseAccessorForUser extends DatabaseAccessor {
                             resultSet.getBoolean("is_active"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return null;
     }
-
-
 }

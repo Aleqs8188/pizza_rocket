@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class AdminDatabaseAccessor extends DatabaseAccessor {
-
     public static int getAllIdFromDB() {
         ArrayList<Admin> adminArrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
@@ -22,8 +21,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                     adminArrayList.add(admin);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return adminArrayList.size();
     }
@@ -45,8 +44,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                     adminArrayList.add(admin);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return adminArrayList;
     }
@@ -67,8 +66,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("secret_code"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return null;
     }
@@ -89,8 +88,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                     }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return orders;
     }
@@ -111,8 +110,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -126,8 +125,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -149,8 +148,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                             resultSet.getString("secret_code"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return admin;
     }
@@ -164,8 +163,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                 statement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -182,8 +181,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }
@@ -214,8 +213,8 @@ public class AdminDatabaseAccessor extends DatabaseAccessor {
                 preparedStatement.executeUpdate();
                 return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
+
         }
         return false;
     }

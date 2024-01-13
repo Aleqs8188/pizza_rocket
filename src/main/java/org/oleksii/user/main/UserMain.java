@@ -21,21 +21,17 @@ import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.*;
 import static org.oleksii.user.databaseAccessors.PizzaDatabaseAccessorForUser.getPizzaFromBDByParameters;
 import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.checker_deleter_promos;
 import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.get_active_promo_from_db;
-import static org.oleksii.user.databaseAccessors.ReviewDatabaseAccessor.*;
+import static org.oleksii.user.databaseAccessors.ReviewDatabaseAccessorForUser.*;
 import static org.oleksii.user.orders.CurrentOrder.*;
 import static org.oleksii.user.orders.OrdersOfAllTime.printAllOrders;
 
-// 1) Reviews and ratings
-// 2) Create especial pizza
-// 3) Administrator and client activity
-// 4) Reset the administrator password and save
-public class Main {
+public class UserMain {
     static Scanner scanner = new Scanner(System.in);
     static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     static int choice;
     static Client clientLog;
 
-    public static void main(String[] args) throws IOException {
+    public static void clientMain() throws IOException {
         while (true) {
             switch (start_for_client_registration_login()) {
                 case 1:
@@ -294,14 +290,19 @@ public class Main {
             return;
         }
         String postalCodeReg;
-        do {
+        while (true) {
             System.out.print(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "          -Postal code of Wroclaw: " + ConsoleColor.RESET.getCode());
             postalCodeReg = reader.readLine();
             if (postalCodeReg.equals("9")) {
                 System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Back" + ConsoleColor.RESET.getCode());
                 return;
             }
-        } while (!(realizeAnOrder("50-001", postalCodeReg) > 0));
+            if (postalCodeReg.length() == 6) {
+                realizeAnOrder("50-001", postalCodeReg);
+                break;
+            }
+            System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Enter your real postal code!" + ConsoleColor.RESET.getCode());
+        }
         System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Payment information:");
         System.out.print("          -Credit Card Number: " + ConsoleColor.RESET.getCode());
         String creditCardNumberReg = reader.readLine();
@@ -448,7 +449,6 @@ public class Main {
         while (true) {
             try {
                 printSymbols();
-                System.out.println(ConsoleColor.CYAN.getCode() + ConsoleColor.BOLD.getCode() + "*Choose what are you want: ");
                 System.out.print("1) Sort by new reviews || 2) Sorted by old reviews || 3) Sort by best reviews || 4) Sort by worst reviews || " + ConsoleColor.RED.getCode() + "5) Back --- " + ConsoleColor.RESET.getCode());
                 choice = scanner.nextInt();
                 if (choice > 5) {

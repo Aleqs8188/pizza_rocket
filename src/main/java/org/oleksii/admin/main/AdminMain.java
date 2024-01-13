@@ -9,6 +9,7 @@ import org.oleksii.admin.super_users.default_administrator.AdminsList;
 import org.oleksii.enums.ConsoleColor;
 import org.oleksii.pizzas.Pizza;
 import org.oleksii.pizzas.PizzasList;
+import org.oleksii.reviews.ReviewList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,15 +24,16 @@ import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.*;
 import static org.oleksii.admin.databaseAccessors.AdminDatabaseAccessor.getAdminFromDB;
 import static org.oleksii.admin.databaseAccessors.PizzaDatabaseAccessorForAdmin.*;
 import static org.oleksii.admin.databaseAccessors.PromoDatabaseAccessorForAdmin.*;
+import static org.oleksii.admin.databaseAccessors.ReviewDatabaseAccessorForAdmin.*;
 import static org.oleksii.admin.super_users.default_administrator.AdminsList.print_details_about_admin;
 import static org.oleksii.user.databaseAccessors.PromoDatabaseAccessorForUser.checker_deleter_promos;
 
-public class Main {
+public class AdminMain {
     static Scanner scanner = new Scanner(System.in);
     static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     static int choice;
 
-    public static void main(String[] args) throws IOException {
+    public static void adminMain() throws IOException {
         while (true) {
             switch (start_login()) {
                 case 1:
@@ -289,8 +291,87 @@ public class Main {
                         main_administrator();
                         break;
                     case 2:
+                        main_reviews();
+                        break;
+                    case 3:
                         return;
                 }
+            }
+        }
+    }
+
+    private static void main_reviews() {
+        switch (start_main_reviews()) {
+            case 1:
+                ReviewList reviewList;
+                switch (start_sorted_review_for_admin()) {
+                    case 1:
+                        reviewList = new ReviewList(get_reviews_from_db_ordered_by_old_date_for_admin());
+                        reviewList.print_reviews_for_admin();
+                        break;
+                    case 2:
+                        reviewList = new ReviewList(get_reviews_from_db_ordered_by_new_date_for_admin());
+                        reviewList.print_reviews_for_admin();
+                        break;
+                    case 3:
+                        reviewList = new ReviewList(get_reviews_from_db_ordered_by_best_rating_for_admin());
+                        reviewList.print_reviews_for_admin();
+                        break;
+                    case 4:
+                        reviewList = new ReviewList(get_reviews_from_db_ordered_by_worst_rating_for_admin());
+                        reviewList.print_reviews_for_admin();
+                        break;
+                }
+                break;
+            case 2:
+                //!
+                break;
+            case 3:
+                break;
+        }
+    }
+
+    private static int start_main_reviews() {
+        while (true) {
+            try {
+                printSymbols();
+                System.out.println("*Choose what are you want: ");
+                System.out.print("1) Print sorted reviews || " + ConsoleColor.RED.getCode() + "3) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 3) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 3) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
+            }
+        }
+    }
+
+    private static int start_sorted_review_for_admin() {
+        while (true) {
+            try {
+                printSymbols();
+                System.out.print("1) Sort by new reviews || 2) Sorted by old reviews || 3) Sort by best reviews || 4) Sort by worst reviews || " + ConsoleColor.RED.getCode() + "5) Back --- " + ConsoleColor.RESET.getCode());
+                choice = scanner.nextInt();
+                if (choice > 5) {
+                    System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
+                    continue;
+                } else if (choice == 5) {
+                    System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
+                }
+                return choice;
+            } catch (InputMismatchException ignored) {
+                printSymbols();
+                scanner.nextLine();
+                System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() +
+                        "*Enter correct number..." + ConsoleColor.RESET.getCode());
             }
         }
     }
@@ -614,12 +695,13 @@ public class Main {
         while (true) {
             try {
                 printSymbols();
-                System.out.print("(1) Managing Administrators || " + ConsoleColor.RED.getCode() + "(2) Exit ---| " + ConsoleColor.RESET.getCode());
+                System.out.print("(1) Managing Administrators || (2) Managing Reviews || " + ConsoleColor.RED.getCode() + "(3) Exit ---| " + ConsoleColor.RESET.getCode());
                 choice = scanner.nextInt();
-                if (choice > 2) {
+                if (choice > 3) {
+                    printSymbols();
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Incorrect value, try again..." + ConsoleColor.RESET.getCode());
                     continue;
-                } else if (choice == 2) {
+                } else if (choice == 3) {
                     System.out.println(ConsoleColor.BLACK.getCode() + ConsoleColor.BOLD.getCode() + "<---Exit" + ConsoleColor.RESET.getCode());
                 }
                 return choice;
@@ -714,6 +796,7 @@ public class Main {
                 changer_promo_name_in_db(new_name, old_name);
                 printSymbols();
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                printSymbols();
                 return;
             } else {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "The promo with the same name already exist..." + ConsoleColor.RESET.getCode());
@@ -745,6 +828,7 @@ public class Main {
                 if (changer_promo_discount_in_db(discount, promo_name)) {
                     printSymbols();
                     System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                    printSymbols();
                     return;
                 } else {
                     System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD.getCode() + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
@@ -779,6 +863,7 @@ public class Main {
             if (changer_promo_description_in_db(description, promo_name)) {
                 printSymbols();
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                printSymbols();
                 return;
             } else {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
@@ -809,6 +894,7 @@ public class Main {
             if (changer_promo_end_date_in_db(end_date, promo_name)) {
                 printSymbols();
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                printSymbols();
                 return;
             } else {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());
@@ -839,6 +925,7 @@ public class Main {
             if (changer_promo_active_in_db(active, promo_name)) {
                 printSymbols();
                 System.out.println(ConsoleColor.GREEN.getCode() + ConsoleColor.BOLD.getCode() + "*Changes made successfully..." + ConsoleColor.RESET.getCode());
+                printSymbols();
                 return;
             } else {
                 System.out.println(ConsoleColor.RED.getCode() + ConsoleColor.BOLD + "Something wrong!Try again..." + ConsoleColor.RESET.getCode());

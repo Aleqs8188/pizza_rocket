@@ -6,9 +6,6 @@ import org.oleksii.user.client.Client;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
-import static org.oleksii.user.databaseAccessors.ClientDatabaseAccessor.getOrdersFromDB;
-
 public class OrdersOfAllTime extends Client {
     public String[] clientOrders;
 

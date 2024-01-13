@@ -6,6 +6,16 @@ public class Review {
     private int id;
     private String rating;
     private String description;
+    private int client_id;
+
+    public int getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(int client_id) {
+        this.client_id = client_id;
+    }
+
 
     public LocalDateTime getDateTime() {
         return dateTime;
@@ -25,6 +35,14 @@ public class Review {
         this.rating = rating;
         this.description = description;
         this.dateTime = localDateTime;
+    }
+
+    public Review(int id, String rating, String description, LocalDateTime localDateTime, int client_id) {
+        this.id = id;
+        this.rating = rating;
+        this.description = description;
+        this.dateTime = localDateTime;
+        this.client_id = client_id;
     }
 
     public int getId() {

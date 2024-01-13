@@ -26,8 +26,7 @@ public class PizzaDatabaseAccessorForUser extends DatabaseAccessor {
                     pizzaArrayList.add(pizza);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return pizzaArrayList;
     }
@@ -52,8 +51,7 @@ public class PizzaDatabaseAccessorForUser extends DatabaseAccessor {
                             resultSet.getString("rating"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         return myObject;
     }

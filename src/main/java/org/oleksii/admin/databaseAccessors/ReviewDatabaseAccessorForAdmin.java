@@ -1,33 +1,12 @@
-package org.oleksii.user.databaseAccessors;
+package org.oleksii.admin.databaseAccessors;
 
 import org.oleksii.reviews.Review;
 
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-public class ReviewDatabaseAccessor extends DatabaseAccessor {
-    public static boolean add_review_to_db(String parameterValue1, String parameterValue2, int parameterValue3) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
-            String sql = "INSERT INTO reviews (rating, description, date, client_id) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setString(1, parameterValue1);
-                preparedStatement.setString(2, parameterValue2);
-                LocalDateTime now = LocalDateTime.now();
-                LocalDateTime truncatedDateTime = now.truncatedTo(ChronoUnit.MINUTES);
-                java.sql.Timestamp timestampDate = java.sql.Timestamp.valueOf(truncatedDateTime);
-                preparedStatement.setTimestamp(3, timestampDate);
-                preparedStatement.setInt(4, parameterValue3);
-                preparedStatement.executeUpdate();
-                return true;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static ArrayList<Review> get_reviews_from_db_ordered_by_old_date() {
+public class ReviewDatabaseAccessorForAdmin extends DatabaseAccessor {
+    public static ArrayList<Review> get_reviews_from_db_ordered_by_old_date_for_admin() {
         ArrayList<Review> arrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "SELECT * FROM reviews ORDER BY date DESC ";
@@ -37,7 +16,8 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
                     Review review = new Review(resultSet.getInt("id"),
                             resultSet.getString("rating"),
                             resultSet.getString("description"),
-                            resultSet.getTimestamp("date").toLocalDateTime());
+                            resultSet.getTimestamp("date").toLocalDateTime(),
+                            resultSet.getInt("client_id"));
                     arrayList.add(review);
                 }
             }
@@ -47,7 +27,7 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
         return arrayList;
     }
 
-    public static ArrayList<Review> get_reviews_from_db_ordered_by_new_date() {
+    public static ArrayList<Review> get_reviews_from_db_ordered_by_new_date_for_admin() {
         ArrayList<Review> arrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "SELECT * FROM reviews ORDER BY date";
@@ -57,7 +37,8 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
                     Review review = new Review(resultSet.getInt("id"),
                             resultSet.getString("rating"),
                             resultSet.getString("description"),
-                            resultSet.getTimestamp("date").toLocalDateTime());
+                            resultSet.getTimestamp("date").toLocalDateTime(),
+                            resultSet.getInt("client_id"));
                     arrayList.add(review);
                 }
             }
@@ -67,7 +48,7 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
         return arrayList;
     }
 
-    public static ArrayList<Review> get_reviews_from_db_ordered_by_worst_rating() {
+    public static ArrayList<Review> get_reviews_from_db_ordered_by_worst_rating_for_admin() {
         ArrayList<Review> arrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "SELECT * FROM reviews ORDER BY rating";
@@ -77,7 +58,8 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
                     Review review = new Review(resultSet.getInt("id"),
                             resultSet.getString("rating"),
                             resultSet.getString("description"),
-                            resultSet.getTimestamp("date").toLocalDateTime());
+                            resultSet.getTimestamp("date").toLocalDateTime(),
+                            resultSet.getInt("client_id"));
                     arrayList.add(review);
                 }
             }
@@ -87,7 +69,7 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
         return arrayList;
     }
 
-    public static ArrayList<Review> get_reviews_from_db_ordered_by_best_rating() {
+    public static ArrayList<Review> get_reviews_from_db_ordered_by_best_rating_for_admin() {
         ArrayList<Review> arrayList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) {
             String sql = "SELECT * FROM reviews ORDER BY rating DESC ";
@@ -97,7 +79,8 @@ public class ReviewDatabaseAccessor extends DatabaseAccessor {
                     Review review = new Review(resultSet.getInt("id"),
                             resultSet.getString("rating"),
                             resultSet.getString("description"),
-                            resultSet.getTimestamp("date").toLocalDateTime());
+                            resultSet.getTimestamp("date").toLocalDateTime(),
+                            resultSet.getInt("client_id"));
                     arrayList.add(review);
                 }
             }
